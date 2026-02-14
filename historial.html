@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Historial - KDS</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #F5F5F5;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #1976D2 0%, #0D47A1 100%);
+      color: white;
+      padding: 25px;
+      text-align: center;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .controls {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #1976D2, #0D47A1);
+      color: white;
+    }
+    
+    .btn-secondary {
+      background: #E0E0E0;
+      color: #333;
+    }
+    
+    .btn:active {
+      transform: scale(0.98);
+    }
+    
+    select {
+      padding: 12px;
+      border: 2px solid #E0E0E0;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    
+    .stats {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    
+    .stat-card {
+      text-align: center;
+      padding: 15px;
+      background: #F5F5F5;
+      border-radius: 8px;
+    }
+    
+    .stat-number {
+      font-size: 36px;
+      font-weight: bold;
+      color: #1976D2;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      color: #666;
+      margin-top: 5px;
+    }
+    
+    .orden-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .orden-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #E3F2FD;
+    }
+    
+    .orden-ticket {
+      font-size: 24px;
+      font-weight: bold;
+      color: #1976D2;
+    }
+    
+    .orden-cliente {
+      font-size: 18px;
+      color: #666;
+    }
+    
+    .orden-fecha {
+      font-size: 14px;
+      color: #999;
+      margin-top: 5px;
+    }
+    
+    .completada-badge {
+      background: #4CAF50;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    .bebida-item {
+      background: #F5F5F5;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .bebida-nombre {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .bebida-cantidad {
+      background: #1976D2;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-right: 8px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    .bebida-detalles {
+      font-size: 14px;
+      color: #666;
+      margin-top: 5px;
+      font-style: italic;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 60px;
+    }
+    
+    .spinner {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #1976D2;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: #999;
+    }
+    
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+    
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>📜 Historial de Órdenes</h1>
+    <p id="timestamp">Cargando...</p>
+  </div>
+
+  <div class="controls">
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="irA('orden.html')">
+        ← Volver a Órdenes
+      </button>
+      <button class="btn btn-secondary" onclick="irA('display.html')">
+        👁️ Ver Display
+      </button>
+    </div>
+    
+    <select id="filtroLimite" onchange="cargarHistorial()">
+      <option value="50">Últimas 50 órdenes</option>
+      <option value="100">Últimas 100 órdenes</option>
+      <option value="200">Últimas 200 órdenes</option>
+      <option value="">Todas las órdenes</option>
+    </select>
+    
+    <button class="btn btn-primary" onclick="cargarHistorial()">
+      🔄 Actualizar
+    </button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div id="historial"></div>
+
+  <script>
+    // IMPORTANTE: Cambiar con tu URL de API
+    const API_URL = 'https://script.google.com/macros/s/TU_API_ID_AQUI/exec';
+    
+    let ordenesHistorial = [];
+    
+    async function cargarHistorial() {
+      console.log('🔄 Cargando historial...');
+      
+      const container = document.getElementById('historial');
+      container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Cargando historial...</p></div>';
+      
+      try {
+        const limite = document.getElementById('filtroLimite').value;
+        const url = API_URL + '?action=getHistorial' + 
+                    (limite ? '&limite=' + limite : '') +
+                    '&_=' + Date.now();
+        
+        console.log('📡 Fetching:', url);
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error('Error HTTP: ' + response.status);
+        }
+        
+        const result = await response.json();
+        console.log('📦 Result:', result);
+        
+        if (!result.success) {
+          throw new Error(result.error || 'Error desconocido');
+        }
+        
+        ordenesHistorial = result.data;
+        console.log('✅ Historial recibido:', ordenesHistorial.length, 'órdenes');
+        
+        mostrarEstadisticas();
+        mostrarHistorial();
+        
+        document.getElementById('timestamp').textContent = 
+          'Actualizado: ' + new Date().toLocaleTimeString('es-CR');
+        
+      } catch (error) {
+        console.error('❌ Error:', error);
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <p style="font-size:20px;font-weight:bold;color:#D32F2F;">Error al cargar historial</p>
+            <p style="margin-top:10px;">${error.message}</p>
+            <button class="btn btn-primary" onclick="cargarHistorial()" style="margin-top:20px;">
+              🔄 Reintentar
+            </button>
+          </div>
+        `;
+      }
+    }
+    
+    function mostrarEstadisticas() {
+      const stats = document.getElementById('stats');
+      
+      const totalOrdenes = ordenesHistorial.length;
+      const totalBebidas = ordenesHistorial.reduce((sum, orden) => 
+        sum + orden.items.reduce((s, item) => s + item.cantidad, 0), 0
+      );
+      
+      // Bebida más pedida
+      const bebidasCount = {};
+      ordenesHistorial.forEach(orden => {
+        orden.items.forEach(item => {
+          bebidasCount[item.bebida] = (bebidasCount[item.bebida] || 0) + item.cantidad;
+        });
+      });
+      
+      const bebidaTop = Object.entries(bebidasCount)
+        .sort((a, b) => b[1] - a[1])[0];
+      
+      stats.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-number">${totalOrdenes}</div>
+          <div class="stat-label">Órdenes Completadas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">${totalBebidas}</div>
+          <div class="stat-label">Bebidas Servidas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">${bebidaTop ? bebidaTop[0] : 'N/A'}</div>
+          <div class="stat-label">Bebida Más Pedida</div>
+        </div>
+      `;
+    }
+    
+    function mostrarHistorial() {
+      const container = document.getElementById('historial');
+      
+      if (!ordenesHistorial || ordenesHistorial.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📜</div>
+            <p style="font-size:24px;font-weight:bold;">No hay historial aún</p>
+            <p style="margin-top:10px;">Las órdenes completadas aparecerán aquí</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = ordenesHistorial.map(orden => {
+        const fecha = new Date(orden.timestamp);
+        const fechaStr = fecha.toLocaleDateString('es-CR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
+        const horaStr = fecha.toLocaleTimeString('es-CR', {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        
+        return `
+          <div class="orden-card">
+            <div class="orden-header">
+              <div>
+                <div class="orden-ticket">${orden.ticket}</div>
+                <div class="orden-cliente">${orden.cliente}</div>
+                <div class="orden-fecha">📅 ${fechaStr} - ⏰ ${horaStr}</div>
+              </div>
+              <div class="completada-badge">✓ Completada</div>
+            </div>
+            
+            ${orden.items.map(item => `
+              <div class="bebida-item">
+                <div>
+                  <span class="bebida-cantidad">${item.cantidad}x</span>
+                  <span class="bebida-nombre">${item.bebida}</span>
+                </div>
+                ${item.detalles ? 
+                  `<div class="bebida-detalles">📝 ${item.detalles}</div>` 
+                  : ''}
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function irA(pagina) {
+      window.location.href = pagina;
+    }
+    
+    // Cargar al inicio
+    cargarHistorial();
+  </script>
+</body>
+</html>
