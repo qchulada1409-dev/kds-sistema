@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Nueva Orden - KDS</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #FFF9C4 0%, #FFEB3B 100%);
+      padding: 20px;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+      color: white;
+      padding: 25px;
+      text-align: center;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 5px;
+    }
+    
+    .panel {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .input-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+      font-size: 16px;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #E0E0E0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: #D32F2F;
+    }
+    
+    .contador {
+      background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+      color: white;
+      padding: 25px;
+      text-align: center;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .contador-numero {
+      font-size: 56px;
+      font-weight: bold;
+      line-height: 1;
+    }
+    
+    .contador-label {
+      font-size: 16px;
+      margin-top: 8px;
+      opacity: 0.9;
+    }
+    
+    .bebidas-list {
+      background: #F5F5F5;
+      border-radius: 12px;
+      padding: 15px;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+    
+    .bebida-item {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .bebida-nombre {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .bebida-cantidad {
+      background: #D32F2F;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.2s;
+    }
+    
+    .btn-add {
+      background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+      color: white;
+    }
+    
+    .btn-submit {
+      background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+      color: white;
+      font-size: 20px;
+      padding: 18px;
+    }
+    
+    .btn:active {
+      transform: scale(0.98);
+    }
+    
+    .btn-remove {
+      background: #F44336;
+      color: white;
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .mensaje {
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      text-align: center;
+      display: none;
+      font-weight: 500;
+    }
+    
+    .exito {
+      background: #C8E6C9;
+      color: #2E7D32;
+      border: 2px solid #81C784;
+    }
+    
+    .error {
+      background: #FFCDD2;
+      color: #C62828;
+      border: 2px solid #EF5350;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+    
+    .loading {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🍹 Nueva Orden</h1>
+      <p>Sistema KDS - Bar & Bebidas</p>
+    </div>
+
+    <div class="panel">
+      <div class="input-group">
+        <label>Ticket #:</label>
+        <input type="text" id="ticket" placeholder="001">
+      </div>
+
+      <div class="input-group">
+        <label>Nombre Cliente:</label>
+        <input type="text" id="cliente" placeholder="Ej: Juan Pérez">
+      </div>
+    </div>
+
+    <div class="contador">
+      <div class="contador-numero" id="contador">0</div>
+      <div class="contador-label">Bebidas en Orden</div>
+    </div>
+
+    <div class="panel">
+      <div class="input-group">
+        <label>Bebida:</label>
+        <select id="bebida">
+          <option value="">-- Cargando... --</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>Cantidad:</label>
+        <input type="number" id="cantidad" value="1" min="1" max="99">
+      </div>
+
+      <div class="input-group">
+        <label>Detalles (opcional):</label>
+        <input type="text" id="detalles" placeholder="Ej: Sin hielo, 2xAzulito 2xMargarita">
+      </div>
+
+      <button class="btn btn-add" onclick="agregarBebida()">
+        ➕ Agregar Bebida
+      </button>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-bottom: 15px; color: #333;">🛒 Bebidas en la Orden</h3>
+      <div class="bebidas-list" id="lista"></div>
+    </div>
+
+    <button class="btn btn-submit" id="btnEnviar" onclick="enviarOrden()">
+      🚀 Enviar Orden Completa
+    </button>
+
+    <div class="mensaje" id="mensaje"></div>
+  </div>
+
+  <script>
+    // ==========================================
+    // CONFIGURACIÓN - IMPORTANTE: Cambiar esta URL
+    // ==========================================
+    const API_URL = 'https://script.google.com/macros/s/AKfycbySzME6CqkzuKfY7rWRj37160xFVdyK1PpIWyHnrk3CMWKDApE9Wu-kvkhv7n5Bhxl1/exec';
+    
+    // ==========================================
+    // ESTADO
+    // ==========================================
+    let bebidas = [];
+    
+    // ==========================================
+    // INICIALIZACIÓN
+    // ==========================================
+    
+    console.log('🚀 Iniciando Nueva Orden KDS');
+    console.log('API URL:', API_URL);
+    
+    // Cargar catálogo de bebidas
+    cargarBebidas();
+    
+    // Generar ticket automático
+    generarTicket();
+    
+    // Inicializar lista
+    actualizarLista();
+    
+    // ==========================================
+    // FUNCIONES
+    // ==========================================
+    
+    async function cargarBebidas() {
+      console.log('📋 Cargando catálogo de bebidas...');
+      
+      try {
+        const response = await fetch(API_URL + '?action=getBebidas&_=' + Date.now());
+        const result = await response.json();
+        
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+        
+        const select = document.getElementById('bebida');
+        select.innerHTML = '<option value="">-- Seleccionar Bebida --</option>';
+        
+        result.data.forEach(bebida => {
+          const option = document.createElement('option');
+          option.value = bebida;
+          option.textContent = bebida;
+          select.appendChild(option);
+        });
+        
+        console.log('✅ Bebidas cargadas:', result.data.length);
+        
+      } catch (error) {
+        console.error('❌ Error cargando bebidas:', error);
+        const select = document.getElementById('bebida');
+        select.innerHTML = '<option value="">Error al cargar bebidas</option>';
+      }
+    }
+    
+    function generarTicket() {
+      const ahora = new Date();
+      const ticket = String(ahora.getHours()).padStart(2, '0') + 
+                     String(ahora.getMinutes()).padStart(2, '0');
+      document.getElementById('ticket').value = ticket;
+    }
+    
+    function agregarBebida() {
+      const nombre = document.getElementById('bebida').value;
+      const cantidad = parseInt(document.getElementById('cantidad').value);
+      const detalles = document.getElementById('detalles').value;
+      
+      if (!nombre) {
+        alert('❌ Selecciona una bebida');
+        return;
+      }
+      
+      if (cantidad < 1 || cantidad > 99) {
+        alert('❌ Cantidad debe ser entre 1 y 99');
+        return;
+      }
+      
+      bebidas.push({ nombre, cantidad, detalles });
+      
+      console.log('➕ Bebida agregada:', { nombre, cantidad, detalles });
+      
+      actualizarLista();
+      
+      // Limpiar campos
+      document.getElementById('bebida').value = '';
+      document.getElementById('cantidad').value = '1';
+      document.getElementById('detalles').value = '';
+      
+      // Focus en bebida
+      document.getElementById('bebida').focus();
+    }
+    
+    function eliminar(index) {
+      console.log('🗑️ Eliminando bebida:', index);
+      bebidas.splice(index, 1);
+      actualizarLista();
+    }
+    
+    function actualizarLista() {
+      const lista = document.getElementById('lista');
+      const contador = document.getElementById('contador');
+      
+      contador.textContent = bebidas.length;
+      
+      if (bebidas.length === 0) {
+        lista.innerHTML = `
+          <div class="empty-state">
+            <p>No hay bebidas agregadas</p>
+            <p style="font-size: 14px; margin-top: 8px;">
+              Usa el formulario arriba para agregar bebidas
+            </p>
+          </div>
+        `;
+        return;
+      }
+      
+      lista.innerHTML = bebidas.map((b, i) => `
+        <div class="bebida-item">
+          <div>
+            <div class="bebida-nombre">
+              <span class="bebida-cantidad">${b.cantidad}x</span>
+              ${b.nombre}
+            </div>
+            ${b.detalles ? 
+              `<div style="font-size:14px;color:#666;margin-top:5px;">📝 ${b.detalles}</div>` 
+              : ''}
+          </div>
+          <button class="btn-remove" onclick="eliminar(${i})">
+            ✕
+          </button>
+        </div>
+      `).join('');
+    }
+    
+    async function enviarOrden() {
+      const ticket = document.getElementById('ticket').value.trim();
+      const cliente = document.getElementById('cliente').value.trim();
+      
+      if (!ticket) {
+        alert('❌ Ingresa el número de ticket');
+        document.getElementById('ticket').focus();
+        return;
+      }
+      
+      if (!cliente) {
+        alert('❌ Ingresa el nombre del cliente');
+        document.getElementById('cliente').focus();
+        return;
+      }
+      
+      if (bebidas.length === 0) {
+        alert('❌ Agrega al menos una bebida a la orden');
+        return;
+      }
+      
+      console.log('📤 Enviando orden:', { ticket, cliente, bebidas });
+      
+      // Deshabilitar botón
+      const btnEnviar = document.getElementById('btnEnviar');
+      btnEnviar.disabled = true;
+      btnEnviar.textContent = '⏳ Enviando...';
+      document.body.classList.add('loading');
+      
+      try {
+        const data = {
+          ticket: ticket,
+          cliente: cliente,
+          bebidas: bebidas
+        };
+        
+        const url = API_URL + '?action=crearOrden&data=' + 
+                    encodeURIComponent(JSON.stringify(data));
+        
+        const response = await fetch(url);
+        const result = await response.json();
+        
+        console.log('📦 Result:', result);
+        
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+        
+        // Mostrar mensaje de éxito
+        const mensaje = document.getElementById('mensaje');
+        mensaje.textContent = '✅ ' + result.data.mensaje;
+        mensaje.className = 'mensaje exito';
+        mensaje.style.display = 'block';
+        
+        console.log('✅ Orden creada exitosamente');
+        
+        // Limpiar formulario
+        bebidas = [];
+        actualizarLista();
+        document.getElementById('cliente').value = '';
+        generarTicket();
+        
+        // Ocultar mensaje después de 3 segundos
+        setTimeout(() => {
+          mensaje.style.display = 'none';
+        }, 3000);
+        
+        // Focus en cliente para siguiente orden
+        document.getElementById('cliente').focus();
+        
+      } catch (error) {
+        console.error('❌ Error:', error);
+        
+        const mensaje = document.getElementById('mensaje');
+        mensaje.textContent = '❌ Error: ' + error.message;
+        mensaje.className = 'mensaje error';
+        mensaje.style.display = 'block';
+        
+      } finally {
+        // Re-habilitar botón
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = '🚀 Enviar Orden Completa';
+        document.body.classList.remove('loading');
+      }
+    }
+    
+    // Shortcuts de teclado
+    document.addEventListener('keydown', function(e) {
+      // Enter en campos = agregar bebida
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+        if (e.key === 'Enter' && e.target.id !== 'cliente') {
+          e.preventDefault();
+          agregarBebida();
+        }
+      }
+      
+      // Ctrl/Cmd + Enter = enviar orden
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        enviarOrden();
+      }
+    });
+  </script>
+</body>
+</html>
