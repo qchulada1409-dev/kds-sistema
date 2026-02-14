@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Display KDS - Bar & Bebidas</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #FFF9C4;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+      color: white;
+      padding: 25px;
+      text-align: center;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .header h1 {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+    
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .orden-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .orden-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid #FFD54F;
+    }
+    
+    .orden-ticket {
+      font-size: 32px;
+      font-weight: bold;
+      color: #D32F2F;
+    }
+    
+    .orden-cliente {
+      font-size: 22px;
+      color: #666;
+    }
+    
+    .bebida-item {
+      background: #F5F5F5;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .bebida-nombre {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    .bebida-cantidad {
+      background: #D32F2F;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    
+    .bebida-detalles {
+      font-size: 16px;
+      color: #666;
+      margin-top: 8px;
+      font-style: italic;
+    }
+    
+    .btn-completar {
+      width: 100%;
+      padding: 20px;
+      background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      transition: all 0.2s;
+    }
+    
+    .btn-completar:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: #999;
+    }
+    
+    .empty-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 60px;
+    }
+    
+    .spinner {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #D32F2F;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .error-state {
+      background: #FFCDD2;
+      color: #C62828;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    
+    .error-state h3 {
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+    
+    .btn-retry {
+      margin-top: 20px;
+      padding: 12px 24px;
+      background: #D32F2F;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🍹 ÓRDENES PENDIENTES</h1>
+    <p id="timestamp">Iniciando...</p>
+  </div>
+
+  <div id="ordenes"></div>
+
+  <script>
+    // ==========================================
+    // CONFIGURACIÓN - IMPORTANTE: Cambiar esta URL
+    // ==========================================
+    const API_URL = 'https://script.google.com/macros/s/AKfycbySzME6CqkzuKfY7rWRj37160xFVdyK1PpIWyHnrk3CMWKDApE9Wu-kvkhv7n5Bhxl1/execs';
+    
+    // ==========================================
+    // FUNCIONES PRINCIPALES
+    // ==========================================
+    
+    async function cargarOrdenes() {
+      console.log('🔄 Cargando órdenes...');
+      
+      const container = document.getElementById('ordenes');
+      container.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <p style="font-size: 18px; color: #666;">Cargando órdenes...</p>
+        </div>
+      `;
+      
+      try {
+        // Agregar timestamp para evitar cache
+        const url = API_URL + '?action=getOrdenes&_=' + Date.now();
+        console.log('📡 Fetching:', url);
+        
+        const response = await fetch(url);
+        console.log('📥 Status:', response.status);
+        
+        if (!response.ok) {
+          throw new Error('Error HTTP: ' + response.status);
+        }
+        
+        const result = await response.json();
+        console.log('📦 Result:', result);
+        
+        if (!result.success) {
+          throw new Error(result.error || 'Error desconocido');
+        }
+        
+        const ordenes = result.data;
+        console.log('✅ Órdenes recibidas:', ordenes.length);
+        
+        mostrarOrdenes(ordenes);
+        
+        // Actualizar timestamp
+        const ahora = new Date();
+        document.getElementById('timestamp').textContent = 
+          'Actualizado: ' + ahora.toLocaleTimeString('es-CR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          });
+        
+      } catch (error) {
+        console.error('❌ Error:', error);
+        
+        container.innerHTML = `
+          <div class="error-state">
+            <h3>⚠️ Error al Cargar Órdenes</h3>
+            <p style="font-size: 16px; margin-top: 10px;">${error.message}</p>
+            <p style="font-size: 14px; margin-top: 10px; opacity: 0.7;">
+              Verifica que la API esté configurada correctamente
+            </p>
+            <button class="btn-retry" onclick="cargarOrdenes()">
+              🔄 Reintentar
+            </button>
+          </div>
+        `;
+      }
+    }
+    
+    function mostrarOrdenes(ordenes) {
+      console.log('📋 Mostrando', ordenes.length, 'órdenes');
+      
+      const container = document.getElementById('ordenes');
+      
+      if (!ordenes || ordenes.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">✅</div>
+            <p style="font-size: 28px; font-weight: bold; margin-bottom: 10px;">
+              No hay órdenes pendientes
+            </p>
+            <p style="font-size: 18px;">¡Todo al día!</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = ordenes.map(orden => `
+        <div class="orden-card">
+          <div class="orden-header">
+            <div>
+              <div class="orden-ticket">${orden.ticket}</div>
+              <div class="orden-cliente">${orden.cliente}</div>
+            </div>
+          </div>
+          
+          ${orden.items.map(item => `
+            <div class="bebida-item">
+              <div>
+                <span class="bebida-cantidad">${item.cantidad}x</span>
+                <span class="bebida-nombre">${item.bebida}</span>
+              </div>
+              ${item.detalles ? 
+                `<div class="bebida-detalles">📝 ${item.detalles}</div>` 
+                : ''}
+            </div>
+          `).join('')}
+          
+          <button class="btn-completar" onclick="completarOrden(${orden.id}, '${orden.ticket}')">
+            ✓ Marcar como Completada
+          </button>
+        </div>
+      `).join('');
+    }
+    
+    async function completarOrden(id, ticket) {
+      console.log('✓ Completando orden:', id, ticket);
+      
+      if (!confirm(`¿Marcar orden ${ticket} como completada?`)) {
+        return;
+      }
+      
+      try {
+        const url = API_URL + '?action=completarOrden&ordenID=' + id;
+        console.log('📡 Completando:', url);
+        
+        const response = await fetch(url);
+        const result = await response.json();
+        
+        console.log('📦 Result:', result);
+        
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+        
+        console.log('✅ Orden completada');
+        
+        // Recargar órdenes inmediatamente
+        cargarOrdenes();
+        
+      } catch (error) {
+        console.error('❌ Error:', error);
+        alert('Error al completar orden: ' + error.message);
+      }
+    }
+    
+    // ==========================================
+    // INICIALIZACIÓN
+    // ==========================================
+    
+    console.log('🚀 Iniciando Display KDS');
+    console.log('API URL:', API_URL);
+    
+    // Cargar órdenes al inicio
+    cargarOrdenes();
+    
+    // Auto-refresh cada 10 segundos
+    console.log('⏰ Auto-refresh configurado (10 segundos)');
+    setInterval(cargarOrdenes, 10000);
+    
+    // Prevenir zoom en mobile
+    document.addEventListener('gesturestart', function(e) {
+      e.preventDefault();
+    });
+  </script>
+</body>
+</html>
