@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
+    <audio id="alertSound" preload="auto">
+    <!-- Tono de notificación usando Web Audio API como fallback -->
+  </audio>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -200,6 +203,88 @@
     // ==========================================
     const API_URL = 'https://script.google.com/macros/s/AKfycbwsRo28aFIDsKtYF7FuugVMlGSShTZKMF18QwlsOdnWlgMhjLDl_YTEr2T-OoI48hqa/exec';
     
+    let ordenesActuales = [];
+    let audioContext;
+    let alertSound;
+    
+    // ==========================================
+    // INICIALIZAR AUDIO
+    // ==========================================
+    
+    function inicializarAudio() {
+      // Crear contexto de audio
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // Intentar cargar sonido embebido
+      alertSound = document.getElementById('alertSound');
+      
+      // Si no hay sonido embebido, usar Web Audio API para generar tono
+      if (!alertSound.src) {
+        console.log('📢 Usando tono generado por Web Audio API');
+      }
+    }
+    
+    function reproducirAlerta() {
+      console.log('🔔 Reproduciendo alerta...');
+      
+      try {
+        // Opción 1: Usar sonido embebido (si existe)
+        if (alertSound && alertSound.src) {
+          alertSound.play().catch(e => console.log('Error reproduciendo audio:', e));
+        } else {
+          // Opción 2: Generar tono con Web Audio API
+          generarTonoAlerta();
+        }
+      } catch (error) {
+        console.error('Error en alerta de sonido:', error);
+      }
+    }
+    
+    function generarTonoAlerta() {
+      if (!audioContext) {
+        inicializarAudio();
+      }
+      
+      // Crear oscilador (genera el tono)
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      // Configurar tono
+      oscillator.frequency.value = 800; // Frecuencia en Hz (tono agudo)
+      oscillator.type = 'sine'; // Tipo de onda
+      
+      // Envelope (volumen que sube y baja)
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+      
+      // Reproducir
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.5);
+      
+      // Segundo tono (doble beep)
+      setTimeout(() => {
+        const osc2 = audioContext.createOscillator();
+        const gain2 = audioContext.createGain();
+        
+        osc2.connect(gain2);
+        gain2.connect(audioContext.destination);
+        
+        osc2.frequency.value = 1000;
+        osc2.type = 'sine';
+        
+        gain2.gain.setValueAtTime(0, audioContext.currentTime);
+        gain2.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
+        gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        
+        osc2.start(audioContext.currentTime);
+        osc2.stop(audioContext.currentTime + 0.5);
+      }, 200);
+    }
+    
     // ==========================================
     // FUNCIONES PRINCIPALES
     // ==========================================
@@ -208,15 +293,18 @@
       console.log('🔄 Cargando órdenes...');
       
       const container = document.getElementById('ordenes');
-      container.innerHTML = `
-        <div class="loading">
-          <div class="spinner"></div>
-          <p style="font-size: 18px; color: #666;">Cargando órdenes...</p>
-        </div>
-      `;
+      
+      // No mostrar loading si ya hay órdenes (para no interrumpir vista)
+      if (ordenesActuales.length === 0) {
+        container.innerHTML = `
+          <div class="loading">
+            <div class="spinner"></div>
+            <p style="font-size: 18px; color: #666;">Cargando órdenes...</p>
+          </div>
+        `;
+      }
       
       try {
-        // Agregar timestamp para evitar cache
         const url = API_URL + '?action=getOrdenes&_=' + Date.now();
         console.log('📡 Fetching:', url);
         
@@ -234,12 +322,18 @@
           throw new Error(result.error || 'Error desconocido');
         }
         
-        const ordenes = result.data;
-        console.log('✅ Órdenes recibidas:', ordenes.length);
+        const ordenesNuevas = result.data;
+        console.log('✅ Órdenes recibidas:', ordenesNuevas.length);
         
-        mostrarOrdenes(ordenes);
+        // DETECTAR NUEVAS ÓRDENES
+        if (ordenesActuales.length > 0 && ordenesNuevas.length > ordenesActuales.length) {
+          console.log('🆕 Nueva orden detectada!');
+          reproducirAlerta();
+        }
         
-        // Actualizar timestamp
+        ordenesActuales = ordenesNuevas;
+        mostrarOrdenes(ordenesNuevas);
+        
         const ahora = new Date();
         document.getElementById('timestamp').textContent = 
           'Actualizado: ' + ahora.toLocaleTimeString('es-CR', {
@@ -279,6 +373,9 @@
               No hay órdenes pendientes
             </p>
             <p style="font-size: 18px;">¡Todo al día!</p>
+            <button class="btn-retry" onclick="window.location.href='historial.html'" style="margin-top:20px;">
+              📜 Ver Historial
+            </button>
           </div>
         `;
         return;
@@ -349,6 +446,15 @@
     
     console.log('🚀 Iniciando Display KDS');
     console.log('API URL:', API_URL);
+    
+    // Inicializar audio al primer click (requerido por navegadores)
+    document.addEventListener('click', function iniciarAudio() {
+      if (!audioContext) {
+        inicializarAudio();
+        console.log('🔊 Audio inicializado');
+      }
+      document.removeEventListener('click', iniciarAudio);
+    }, { once: true });
     
     // Cargar órdenes al inicio
     cargarOrdenes();
