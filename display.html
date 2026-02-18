@@ -1,58 +1,200 @@
 <!DOCTYPE html>
 <html lang="es">
-    <audio id="alertSound" preload="auto">
-    <!-- Tono de notificación usando Web Audio API como fallback -->
-  </audio>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <title>Display KDS - Bar & Bebidas</title>
+  <title>Órdenes Pendientes — Q'Chulada</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --chile: #C0392B;
+      --chile-deep: #922B21;
+      --terracotta: #D35400;
+      --marigold: #F39C12;
+      --marigold-light: #FDEBD0;
+      --forest: #1E8449;
+      --forest-deep: #196F3D;
+      --cream: #FFF8F0;
+      --sand: #FAF0E6;
+      --bark: #4A2C2A;
+      --bark-light: #6D4C41;
+      --clay: #F5E6D3;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
     }
-    
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      background: #FFF9C4;
-      padding: 20px;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      padding: 0;
       min-height: 100vh;
     }
-    
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(circle at 15% 85%, rgba(243, 156, 18, 0.07) 0%, transparent 50%),
+        radial-gradient(circle at 85% 15%, rgba(192, 57, 43, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .papel-picado {
+      width: 100%;
+      height: 28px;
+      display: block;
+      background:
+        linear-gradient(135deg, var(--chile) 25%, transparent 25%) -14px 0,
+        linear-gradient(225deg, var(--marigold) 25%, transparent 25%) -14px 0,
+        linear-gradient(315deg, var(--forest) 25%, transparent 25%),
+        linear-gradient(45deg, var(--terracotta) 25%, transparent 25%);
+      background-size: 28px 28px;
+      background-color: var(--chile-deep);
+      position: relative;
+    }
+
+    .papel-picado::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0; right: 0;
+      height: 6px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--chile) 0px, var(--chile) 8px,
+        var(--marigold) 8px, var(--marigold) 16px,
+        var(--forest) 16px, var(--forest) 24px,
+        var(--terracotta) 24px, var(--terracotta) 32px
+      );
+      clip-path: polygon(
+        0% 0%, 4px 100%, 8px 0%, 12px 100%, 16px 0%, 20px 100%, 24px 0%, 28px 100%, 32px 0%,
+        36px 100%, 40px 0%, 44px 100%, 48px 0%, 52px 100%, 56px 0%, 60px 100%, 64px 0%,
+        68px 100%, 72px 0%, 76px 100%, 80px 0%, 84px 100%, 88px 0%, 92px 100%, 96px 0%,
+        100% 100%, 100% 0%
+      );
+    }
+
+    .main-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
     .header {
-      background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+      background: linear-gradient(135deg, var(--chile) 0%, var(--chile-deep) 100%);
       color: white;
-      padding: 25px;
+      padding: 28px 25px 22px;
       text-align: center;
-      border-radius: 12px;
-      margin-bottom: 25px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      border-radius: 0 0 16px 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 24px rgba(146, 43, 33, 0.3);
+      position: relative;
+      overflow: hidden;
     }
-    
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20z' fill='none' stroke='rgba(255,255,255,0.06)' stroke-width='1'/%3E%3C/svg%3E") repeat;
+    }
+
     .header h1 {
-      font-size: 36px;
-      margin-bottom: 8px;
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 2px;
+      position: relative;
+      letter-spacing: -0.5px;
     }
-    
-    .header p {
+
+    .header .brand {
+      font-family: 'Playfair Display', serif;
       font-size: 14px;
-      opacity: 0.9;
+      font-weight: 700;
+      opacity: 0.8;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      position: relative;
+      margin-bottom: 6px;
     }
-    
+
+    .header p {
+      font-size: 13px;
+      opacity: 0.75;
+      position: relative;
+      font-weight: 500;
+    }
+
+    /* Visual notification flash */
+    .notif-flash {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(243, 156, 18, 0.2);
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .notif-flash.active {
+      animation: flashPulse 1.2s ease-out;
+    }
+
+    @keyframes flashPulse {
+      0% { opacity: 1; }
+      25% { opacity: 0; }
+      50% { opacity: 0.7; }
+      75% { opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    .notif-banner {
+      position: fixed;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: linear-gradient(135deg, var(--marigold), var(--terracotta));
+      color: white;
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      z-index: 10000;
+      box-shadow: 0 8px 30px rgba(211, 84, 0, 0.4);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 0.3px;
+    }
+
+    .notif-banner.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
     .orden-card {
       background: white;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      animation: slideIn 0.3s ease;
+      box-shadow: 0 3px 14px rgba(74, 44, 42, 0.1);
+      animation: slideIn 0.35s ease;
+      border: 1px solid rgba(74, 44, 42, 0.06);
+      border-left: 5px solid var(--marigold);
     }
-    
+
     @keyframes slideIn {
       from {
         opacity: 0;
@@ -63,170 +205,211 @@
         transform: translateY(0);
       }
     }
-    
+
     .orden-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 15px;
       padding-bottom: 15px;
-      border-bottom: 3px solid #FFD54F;
+      border-bottom: 2px solid var(--clay);
     }
-    
+
     .orden-ticket {
-      font-size: 32px;
-      font-weight: bold;
-      color: #D32F2F;
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      font-weight: 900;
+      color: var(--chile);
     }
-    
+
     .orden-cliente {
-      font-size: 22px;
-      color: #666;
+      font-size: 20px;
+      color: var(--bark-light);
+      font-weight: 600;
     }
-    
+
     .bebida-item {
-      background: #F5F5F5;
-      padding: 15px;
-      border-radius: 8px;
+      background: var(--sand);
+      padding: 14px 16px;
+      border-radius: 10px;
       margin-bottom: 10px;
+      border-left: 3px solid var(--terracotta);
     }
-    
+
     .bebida-nombre {
-      font-size: 24px;
-      font-weight: bold;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--bark);
     }
-    
+
     .bebida-cantidad {
-      background: #D32F2F;
+      background: var(--chile);
       color: white;
-      padding: 6px 14px;
+      padding: 5px 13px;
       border-radius: 20px;
       margin-right: 10px;
-      font-weight: bold;
+      font-weight: 700;
     }
-    
+
     .bebida-detalles {
-      font-size: 16px;
-      color: #666;
+      font-size: 15px;
+      color: var(--bark-light);
       margin-top: 8px;
       font-style: italic;
     }
-    
+
     .btn-completar {
       width: 100%;
-      padding: 20px;
-      background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+      padding: 18px;
+      background: linear-gradient(135deg, var(--forest) 0%, var(--forest-deep) 100%);
       color: white;
       border: none;
-      border-radius: 8px;
-      font-size: 22px;
-      font-weight: bold;
+      border-radius: 10px;
+      font-size: 20px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
       cursor: pointer;
       margin-top: 15px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      box-shadow: 0 5px 16px rgba(30, 132, 73, 0.25);
       transition: all 0.2s;
+      letter-spacing: 0.3px;
     }
-    
+
     .btn-completar:active {
-      transform: scale(0.98);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transform: scale(0.97);
+      box-shadow: 0 2px 8px rgba(30, 132, 73, 0.2);
     }
-    
+
     .empty-state {
       text-align: center;
       padding: 80px 20px;
-      color: #999;
+      color: var(--bark-light);
     }
-    
+
     .empty-icon {
-      font-size: 80px;
-      margin-bottom: 20px;
+      font-size: 72px;
+      margin-bottom: 16px;
     }
-    
+
     .loading {
       text-align: center;
       padding: 60px;
     }
-    
+
     .spinner {
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid #D32F2F;
+      border: 5px solid var(--clay);
+      border-top: 5px solid var(--chile);
       border-radius: 50%;
-      width: 70px;
-      height: 70px;
-      animation: spin 1s linear infinite;
+      width: 64px;
+      height: 64px;
+      animation: spin 0.9s linear infinite;
       margin: 0 auto 20px;
     }
-    
+
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    
+
     .error-state {
-      background: #FFCDD2;
-      color: #C62828;
+      background: #FADBD8;
+      color: var(--chile-deep);
       padding: 30px;
-      border-radius: 12px;
+      border-radius: 14px;
       text-align: center;
+      border: 1px solid rgba(192, 57, 43, 0.2);
     }
-    
+
     .error-state h3 {
-      font-size: 24px;
-      margin-bottom: 15px;
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      margin-bottom: 12px;
     }
-    
+
     .btn-retry {
-      margin-top: 20px;
-      padding: 12px 24px;
-      background: #D32F2F;
+      margin-top: 18px;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, var(--chile), var(--chile-deep));
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 16px;
-      font-weight: bold;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
       cursor: pointer;
+      box-shadow: 0 3px 10px rgba(192, 57, 43, 0.2);
+    }
+
+    @media (max-width: 480px) {
+      .main-wrap { padding: 14px; }
+      .header h1 { font-size: 26px; }
+      .orden-ticket { font-size: 24px; }
+      .bebida-nombre { font-size: 18px; }
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>🍹 ÓRDENES PENDIENTES</h1>
-    <p id="timestamp">Iniciando...</p>
-  </div>
+  <div class="papel-picado"></div>
 
-  <div id="ordenes"></div>
+  <!-- Notification overlays -->
+  <div class="notif-flash" id="notifFlash"></div>
+  <div class="notif-banner" id="notifBanner">Nueva orden recibida</div>
+
+  <!-- Audio element properly inside body -->
+  <audio id="alertSound" preload="auto"></audio>
+
+  <div class="main-wrap">
+    <div class="header">
+      <div class="brand">Q'Chulada</div>
+      <h1>Órdenes Pendientes</h1>
+      <p id="timestamp">Iniciando...</p>
+    </div>
+
+    <div id="ordenes"></div>
+  </div>
 
   <script>
     // ==========================================
     // CONFIGURACIÓN - IMPORTANTE: Cambiar esta URL
     // ==========================================
     const API_URL = 'https://script.google.com/macros/s/AKfycbwiHg2pF6Sd2CrQtlw7k1uhGPsuIgOK_di8ZPhZrir3F_XU6UhPWawfZgl1-CA4viI1/exec';
-    
+
     let ordenesActuales = [];
     let audioContext;
     let alertSound;
-    
+
     // ==========================================
     // INICIALIZAR AUDIO
     // ==========================================
-    
+
     function inicializarAudio() {
       // Crear contexto de audio
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      
+
       // Intentar cargar sonido embebido
       alertSound = document.getElementById('alertSound');
-      
+
       // Si no hay sonido embebido, usar Web Audio API para generar tono
       if (!alertSound.src) {
         console.log('📢 Usando tono generado por Web Audio API');
       }
     }
-    
+
     function reproducirAlerta() {
       console.log('🔔 Reproduciendo alerta...');
-      
+
+      // Visual notification
+      const flash = document.getElementById('notifFlash');
+      const banner = document.getElementById('notifBanner');
+      flash.classList.remove('active');
+      banner.classList.remove('show');
+      void flash.offsetWidth; // force reflow
+      flash.classList.add('active');
+      banner.classList.add('show');
+      setTimeout(() => {
+        banner.classList.remove('show');
+      }, 3000);
+
       try {
         // Opción 1: Usar sonido embebido (si existe)
         if (alertSound && alertSound.src) {
@@ -239,61 +422,66 @@
         console.error('Error en alerta de sonido:', error);
       }
     }
-    
+
     function generarTonoAlerta() {
       if (!audioContext) {
         inicializarAudio();
       }
-      
+
+      // Resume context if suspended (browser autoplay policy)
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+
       // Crear oscilador (genera el tono)
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
-      
+
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
-      
+
       // Configurar tono
       oscillator.frequency.value = 800; // Frecuencia en Hz (tono agudo)
       oscillator.type = 'sine'; // Tipo de onda
-      
+
       // Envelope (volumen que sube y baja)
       gainNode.gain.setValueAtTime(0, audioContext.currentTime);
       gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
       gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-      
+
       // Reproducir
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.5);
-      
+
       // Segundo tono (doble beep)
       setTimeout(() => {
         const osc2 = audioContext.createOscillator();
         const gain2 = audioContext.createGain();
-        
+
         osc2.connect(gain2);
         gain2.connect(audioContext.destination);
-        
+
         osc2.frequency.value = 1000;
         osc2.type = 'sine';
-        
+
         gain2.gain.setValueAtTime(0, audioContext.currentTime);
         gain2.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
         gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-        
+
         osc2.start(audioContext.currentTime);
         osc2.stop(audioContext.currentTime + 0.5);
       }, 200);
     }
-    
+
     // ==========================================
     // FUNCIONES PRINCIPALES
     // ==========================================
-    
+
     async function cargarOrdenes() {
       console.log('🔄 Cargando órdenes...');
-      
+
       const container = document.getElementById('ordenes');
-      
+
       // No mostrar loading si ya hay órdenes (para no interrumpir vista)
       if (ordenesActuales.length === 0) {
         container.innerHTML = `
@@ -303,68 +491,68 @@
           </div>
         `;
       }
-      
+
       try {
         const url = API_URL + '?action=getOrdenes&_=' + Date.now();
         console.log('📡 Fetching:', url);
-        
+
         const response = await fetch(url);
         console.log('📥 Status:', response.status);
-        
+
         if (!response.ok) {
           throw new Error('Error HTTP: ' + response.status);
         }
-        
+
         const result = await response.json();
         console.log('📦 Result:', result);
-        
+
         if (!result.success) {
           throw new Error(result.error || 'Error desconocido');
         }
-        
+
         const ordenesNuevas = result.data;
         console.log('✅ Órdenes recibidas:', ordenesNuevas.length);
-        
+
         // DETECTAR NUEVAS ÓRDENES
         if (ordenesActuales.length > 0 && ordenesNuevas.length > ordenesActuales.length) {
           console.log('🆕 Nueva orden detectada!');
           reproducirAlerta();
         }
-        
+
         ordenesActuales = ordenesNuevas;
         mostrarOrdenes(ordenesNuevas);
-        
+
         const ahora = new Date();
-        document.getElementById('timestamp').textContent = 
+        document.getElementById('timestamp').textContent =
           'Actualizado: ' + ahora.toLocaleTimeString('es-CR', {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit'
           });
-        
+
       } catch (error) {
         console.error('❌ Error:', error);
-        
+
         container.innerHTML = `
           <div class="error-state">
-            <h3>⚠️ Error al Cargar Órdenes</h3>
+            <h3>Error al Cargar Órdenes</h3>
             <p style="font-size: 16px; margin-top: 10px;">${error.message}</p>
             <p style="font-size: 14px; margin-top: 10px; opacity: 0.7;">
               Verifica que la API esté configurada correctamente
             </p>
             <button class="btn-retry" onclick="cargarOrdenes()">
-              🔄 Reintentar
+              Reintentar
             </button>
           </div>
         `;
       }
     }
-    
+
     function mostrarOrdenes(ordenes) {
       console.log('📋 Mostrando', ordenes.length, 'órdenes');
-      
+
       const container = document.getElementById('ordenes');
-      
+
       if (!ordenes || ordenes.length === 0) {
         container.innerHTML = `
           <div class="empty-state">
@@ -380,7 +568,7 @@
         `;
         return;
       }
-      
+
       container.innerHTML = ordenes.map(orden => `
         <div class="orden-card">
           <div class="orden-header">
@@ -389,64 +577,64 @@
               <div class="orden-cliente">${orden.cliente}</div>
             </div>
           </div>
-          
+
           ${orden.items.map(item => `
             <div class="bebida-item">
               <div>
                 <span class="bebida-cantidad">${item.cantidad}x</span>
                 <span class="bebida-nombre">${item.bebida}</span>
               </div>
-              ${item.detalles ? 
-                `<div class="bebida-detalles">📝 ${item.detalles}</div>` 
+              ${item.detalles ?
+                `<div class="bebida-detalles">📝 ${item.detalles}</div>`
                 : ''}
             </div>
           `).join('')}
-          
+
           <button class="btn-completar" onclick="completarOrden(${orden.id}, '${orden.ticket}')">
             ✓ Marcar como Completada
           </button>
         </div>
       `).join('');
     }
-    
+
     async function completarOrden(id, ticket) {
       console.log('✓ Completando orden:', id, ticket);
-      
+
       if (!confirm(`¿Marcar orden ${ticket} como completada?`)) {
         return;
       }
-      
+
       try {
         const url = API_URL + '?action=completarOrden&ordenID=' + id;
         console.log('📡 Completando:', url);
-        
+
         const response = await fetch(url);
         const result = await response.json();
-        
+
         console.log('📦 Result:', result);
-        
+
         if (!result.success) {
           throw new Error(result.error);
         }
-        
+
         console.log('✅ Orden completada');
-        
+
         // Recargar órdenes inmediatamente
         cargarOrdenes();
-        
+
       } catch (error) {
         console.error('❌ Error:', error);
         alert('Error al completar orden: ' + error.message);
       }
     }
-    
+
     // ==========================================
     // INICIALIZACIÓN
     // ==========================================
-    
+
     console.log('🚀 Iniciando Display KDS');
     console.log('API URL:', API_URL);
-    
+
     // Inicializar audio al primer click (requerido por navegadores)
     document.addEventListener('click', function iniciarAudio() {
       if (!audioContext) {
@@ -455,14 +643,14 @@
       }
       document.removeEventListener('click', iniciarAudio);
     }, { once: true });
-    
+
     // Cargar órdenes al inicio
     cargarOrdenes();
-    
+
     // Auto-refresh cada 10 segundos
     console.log('⏰ Auto-refresh configurado (10 segundos)');
     setInterval(cargarOrdenes, 10000);
-    
+
     // Prevenir zoom en mobile
     document.addEventListener('gesturestart', function(e) {
       e.preventDefault();

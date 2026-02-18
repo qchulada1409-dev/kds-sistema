@@ -4,297 +4,437 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Historial - KDS</title>
+  <title>Historial — Q'Chulada</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --chile: #C0392B;
+      --chile-deep: #922B21;
+      --terracotta: #D35400;
+      --marigold: #F39C12;
+      --marigold-light: #FDEBD0;
+      --forest: #1E8449;
+      --forest-deep: #196F3D;
+      --cream: #FFF8F0;
+      --sand: #FAF0E6;
+      --bark: #4A2C2A;
+      --bark-light: #6D4C41;
+      --clay: #F5E6D3;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      background: #F5F5F5;
-      padding: 20px;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      padding: 0;
       min-height: 100vh;
     }
-    
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(circle at 25% 75%, rgba(211, 84, 0, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 75% 25%, rgba(30, 132, 73, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .papel-picado {
+      width: 100%;
+      height: 28px;
+      display: block;
+      background:
+        linear-gradient(135deg, var(--chile) 25%, transparent 25%) -14px 0,
+        linear-gradient(225deg, var(--marigold) 25%, transparent 25%) -14px 0,
+        linear-gradient(315deg, var(--forest) 25%, transparent 25%),
+        linear-gradient(45deg, var(--terracotta) 25%, transparent 25%);
+      background-size: 28px 28px;
+      background-color: var(--chile-deep);
+      position: relative;
+    }
+
+    .papel-picado::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0; right: 0;
+      height: 6px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--chile) 0px, var(--chile) 8px,
+        var(--marigold) 8px, var(--marigold) 16px,
+        var(--forest) 16px, var(--forest) 24px,
+        var(--terracotta) 24px, var(--terracotta) 32px
+      );
+      clip-path: polygon(
+        0% 0%, 4px 100%, 8px 0%, 12px 100%, 16px 0%, 20px 100%, 24px 0%, 28px 100%, 32px 0%,
+        36px 100%, 40px 0%, 44px 100%, 48px 0%, 52px 100%, 56px 0%, 60px 100%, 64px 0%,
+        68px 100%, 72px 0%, 76px 100%, 80px 0%, 84px 100%, 88px 0%, 92px 100%, 96px 0%,
+        100% 100%, 100% 0%
+      );
+    }
+
+    .main-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
     .header {
-      background: linear-gradient(135deg, #1976D2 0%, #0D47A1 100%);
+      background: linear-gradient(135deg, var(--bark) 0%, #3E2723 100%);
       color: white;
-      padding: 25px;
+      padding: 28px 25px 22px;
       text-align: center;
-      border-radius: 12px;
-      margin-bottom: 25px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      border-radius: 0 0 16px 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 24px rgba(62, 39, 35, 0.3);
+      position: relative;
+      overflow: hidden;
     }
-    
-    .header h1 {
-      font-size: 32px;
-      margin-bottom: 8px;
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20z' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3C/svg%3E") repeat;
     }
-    
-    .header p {
+
+    .header .brand {
+      font-family: 'Playfair Display', serif;
       font-size: 14px;
-      opacity: 0.9;
+      font-weight: 700;
+      opacity: 0.75;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      position: relative;
+      margin-bottom: 6px;
     }
-    
+
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      font-weight: 900;
+      margin-bottom: 4px;
+      position: relative;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      font-size: 13px;
+      opacity: 0.7;
+      position: relative;
+      font-weight: 500;
+    }
+
     .controls {
       background: white;
-      padding: 20px;
-      border-radius: 12px;
+      padding: 18px 20px;
+      border-radius: 14px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 12px rgba(74, 44, 42, 0.08);
+      border: 1px solid rgba(74, 44, 42, 0.06);
       display: flex;
-      gap: 15px;
+      gap: 12px;
       flex-wrap: wrap;
       align-items: center;
     }
-    
+
     .btn {
-      padding: 12px 24px;
+      padding: 11px 22px;
       border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
       cursor: pointer;
       transition: all 0.2s;
+      letter-spacing: 0.2px;
     }
-    
+
     .btn-primary {
-      background: linear-gradient(135deg, #1976D2, #0D47A1);
+      background: linear-gradient(135deg, var(--terracotta), var(--chile));
       color: white;
+      box-shadow: 0 3px 10px rgba(211, 84, 0, 0.2);
     }
-    
+
     .btn-secondary {
-      background: #E0E0E0;
-      color: #333;
+      background: var(--clay);
+      color: var(--bark);
     }
-    
-    .btn:active {
-      transform: scale(0.98);
+
+    .btn-secondary:active, .btn-primary:active, .btn:active {
+      transform: scale(0.97);
     }
-    
+
     select {
-      padding: 12px;
-      border: 2px solid #E0E0E0;
-      border-radius: 8px;
-      font-size: 16px;
+      padding: 11px 14px;
+      border: 2px solid var(--clay);
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--bark);
+      background: var(--cream);
     }
-    
+
+    select:focus {
+      outline: none;
+      border-color: var(--terracotta);
+    }
+
     .stats {
       background: white;
       padding: 20px;
-      border-radius: 12px;
+      border-radius: 14px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 12px rgba(74, 44, 42, 0.08);
+      border: 1px solid rgba(74, 44, 42, 0.06);
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
     }
-    
+
     .stat-card {
       text-align: center;
-      padding: 15px;
-      background: #F5F5F5;
-      border-radius: 8px;
+      padding: 18px 14px;
+      background: var(--sand);
+      border-radius: 12px;
+      border: 1px solid rgba(74, 44, 42, 0.05);
     }
-    
+
     .stat-number {
-      font-size: 36px;
-      font-weight: bold;
-      color: #1976D2;
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      font-weight: 900;
+      color: var(--chile);
     }
-    
+
     .stat-label {
-      font-size: 14px;
-      color: #666;
-      margin-top: 5px;
+      font-size: 13px;
+      color: var(--bark-light);
+      margin-top: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    
+
     .orden-card {
       background: white;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 20px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(74, 44, 42, 0.07);
+      border: 1px solid rgba(74, 44, 42, 0.06);
+      border-left: 4px solid var(--forest);
     }
-    
+
     .orden-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 15px;
       padding-bottom: 15px;
-      border-bottom: 2px solid #E3F2FD;
+      border-bottom: 2px solid var(--clay);
     }
-    
+
     .orden-ticket {
-      font-size: 24px;
-      font-weight: bold;
-      color: #1976D2;
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--bark);
     }
-    
+
     .orden-cliente {
-      font-size: 18px;
-      color: #666;
+      font-size: 17px;
+      color: var(--bark-light);
+      font-weight: 600;
     }
-    
+
     .orden-fecha {
-      font-size: 14px;
+      font-size: 13px;
       color: #999;
-      margin-top: 5px;
+      margin-top: 4px;
+      font-weight: 500;
     }
-    
+
     .completada-badge {
-      background: #4CAF50;
+      background: linear-gradient(135deg, var(--forest), var(--forest-deep));
       color: white;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 20px;
-      font-size: 14px;
-      font-weight: bold;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
     }
-    
+
     .bebida-item {
-      background: #F5F5F5;
-      padding: 12px;
-      border-radius: 8px;
+      background: var(--sand);
+      padding: 12px 14px;
+      border-radius: 10px;
       margin-bottom: 8px;
+      border-left: 3px solid var(--marigold);
     }
-    
+
     .bebida-nombre {
-      font-size: 18px;
-      font-weight: bold;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--bark);
     }
-    
+
     .bebida-cantidad {
-      background: #1976D2;
+      background: var(--terracotta);
       color: white;
-      padding: 4px 10px;
+      padding: 3px 10px;
       border-radius: 20px;
       margin-right: 8px;
-      font-weight: bold;
-      font-size: 14px;
+      font-weight: 700;
+      font-size: 13px;
     }
-    
+
     .bebida-detalles {
-      font-size: 14px;
-      color: #666;
+      font-size: 13px;
+      color: var(--bark-light);
       margin-top: 5px;
       font-style: italic;
     }
-    
+
     .loading {
       text-align: center;
       padding: 60px;
     }
-    
+
     .spinner {
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid #1976D2;
+      border: 5px solid var(--clay);
+      border-top: 5px solid var(--terracotta);
       border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      animation: spin 1s linear infinite;
+      width: 56px;
+      height: 56px;
+      animation: spin 0.9s linear infinite;
       margin: 0 auto 20px;
     }
-    
+
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    
+
     .empty-state {
       text-align: center;
-      padding: 80px 20px;
-      color: #999;
+      padding: 70px 20px;
+      color: var(--bark-light);
     }
-    
+
     .empty-icon {
-      font-size: 64px;
-      margin-bottom: 20px;
+      font-size: 60px;
+      margin-bottom: 16px;
     }
-    
+
     .nav-buttons {
       display: flex;
       gap: 10px;
     }
+
+    @media (max-width: 480px) {
+      .main-wrap { padding: 14px; }
+      .header h1 { font-size: 24px; }
+      .controls { flex-direction: column; }
+      .nav-buttons { width: 100%; }
+      .nav-buttons .btn { flex: 1; text-align: center; }
+      select { width: 100%; }
+      .stats { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>📜 Historial de Órdenes</h1>
-    <p id="timestamp">Cargando...</p>
-  </div>
+  <div class="papel-picado"></div>
 
-  <div class="controls">
-    <div class="nav-buttons">
-      <button class="btn btn-secondary" onclick="irA('orden.html')">
-        ← Volver a Órdenes
-      </button>
-      <button class="btn btn-secondary" onclick="irA('display.html')">
-        👁️ Ver Display
+  <div class="main-wrap">
+    <div class="header">
+      <div class="brand">Q'Chulada</div>
+      <h1>Historial de Órdenes</h1>
+      <p id="timestamp">Cargando...</p>
+    </div>
+
+    <div class="controls">
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="irA('orden.html')">
+          ← Volver a Órdenes
+        </button>
+        <button class="btn btn-secondary" onclick="irA('display.html')">
+          Ver Display
+        </button>
+      </div>
+
+      <select id="filtroLimite" onchange="cargarHistorial()">
+        <option value="50">Últimas 50 órdenes</option>
+        <option value="100">Últimas 100 órdenes</option>
+        <option value="200">Últimas 200 órdenes</option>
+        <option value="">Todas las órdenes</option>
+      </select>
+
+      <button class="btn btn-primary" onclick="cargarHistorial()">
+        Actualizar
       </button>
     </div>
-    
-    <select id="filtroLimite" onchange="cargarHistorial()">
-      <option value="50">Últimas 50 órdenes</option>
-      <option value="100">Últimas 100 órdenes</option>
-      <option value="200">Últimas 200 órdenes</option>
-      <option value="">Todas las órdenes</option>
-    </select>
-    
-    <button class="btn btn-primary" onclick="cargarHistorial()">
-      🔄 Actualizar
-    </button>
+
+    <div class="stats" id="stats"></div>
+
+    <div id="historial"></div>
   </div>
-
-  <div class="stats" id="stats"></div>
-
-  <div id="historial"></div>
 
   <script>
     // IMPORTANTE: Cambiar con tu URL de API
     const API_URL = 'https://script.google.com/macros/s/AKfycbwiHg2pF6Sd2CrQtlw7k1uhGPsuIgOK_di8ZPhZrir3F_XU6UhPWawfZgl1-CA4viI1/exec';
-    
+
     let ordenesHistorial = [];
-    
+
     async function cargarHistorial() {
       console.log('🔄 Cargando historial...');
-      
+
       const container = document.getElementById('historial');
       container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Cargando historial...</p></div>';
-      
+
       try {
         const limite = document.getElementById('filtroLimite').value;
-        const url = API_URL + '?action=getHistorial' + 
+        const url = API_URL + '?action=getHistorial' +
                     (limite ? '&limite=' + limite : '') +
                     '&_=' + Date.now();
-        
+
         console.log('📡 Fetching:', url);
-        
+
         const response = await fetch(url);
-        
+
         if (!response.ok) {
           throw new Error('Error HTTP: ' + response.status);
         }
-        
+
         const result = await response.json();
         console.log('📦 Result:', result);
-        
+
         if (!result.success) {
           throw new Error(result.error || 'Error desconocido');
         }
-        
+
         ordenesHistorial = result.data;
         console.log('✅ Historial recibido:', ordenesHistorial.length, 'órdenes');
-        
+
         mostrarEstadisticas();
         mostrarHistorial();
-        
-        document.getElementById('timestamp').textContent = 
+
+        document.getElementById('timestamp').textContent =
           'Actualizado: ' + new Date().toLocaleTimeString('es-CR');
-        
+
       } catch (error) {
         console.error('❌ Error:', error);
         container.innerHTML = `
@@ -309,15 +449,15 @@
         `;
       }
     }
-    
+
     function mostrarEstadisticas() {
       const stats = document.getElementById('stats');
-      
+
       const totalOrdenes = ordenesHistorial.length;
-      const totalBebidas = ordenesHistorial.reduce((sum, orden) => 
+      const totalBebidas = ordenesHistorial.reduce((sum, orden) =>
         sum + orden.items.reduce((s, item) => s + item.cantidad, 0), 0
       );
-      
+
       // Bebida más pedida
       const bebidasCount = {};
       ordenesHistorial.forEach(orden => {
@@ -325,10 +465,10 @@
           bebidasCount[item.bebida] = (bebidasCount[item.bebida] || 0) + item.cantidad;
         });
       });
-      
+
       const bebidaTop = Object.entries(bebidasCount)
         .sort((a, b) => b[1] - a[1])[0];
-      
+
       stats.innerHTML = `
         <div class="stat-card">
           <div class="stat-number">${totalOrdenes}</div>
@@ -344,10 +484,10 @@
         </div>
       `;
     }
-    
+
     function mostrarHistorial() {
       const container = document.getElementById('historial');
-      
+
       if (!ordenesHistorial || ordenesHistorial.length === 0) {
         container.innerHTML = `
           <div class="empty-state">
@@ -358,7 +498,7 @@
         `;
         return;
       }
-      
+
       container.innerHTML = ordenesHistorial.map(orden => {
         const fecha = new Date(orden.timestamp);
         const fechaStr = fecha.toLocaleDateString('es-CR', {
@@ -370,7 +510,7 @@
           hour: '2-digit',
           minute: '2-digit'
         });
-        
+
         return `
           <div class="orden-card">
             <div class="orden-header">
@@ -381,15 +521,15 @@
               </div>
               <div class="completada-badge">✓ Completada</div>
             </div>
-            
+
             ${orden.items.map(item => `
               <div class="bebida-item">
                 <div>
                   <span class="bebida-cantidad">${item.cantidad}x</span>
                   <span class="bebida-nombre">${item.bebida}</span>
                 </div>
-                ${item.detalles ? 
-                  `<div class="bebida-detalles">📝 ${item.detalles}</div>` 
+                ${item.detalles ?
+                  `<div class="bebida-detalles">📝 ${item.detalles}</div>`
                   : ''}
               </div>
             `).join('')}
@@ -397,11 +537,11 @@
         `;
       }).join('');
     }
-    
+
     function irA(pagina) {
       window.location.href = pagina;
     }
-    
+
     // Cargar al inicio
     cargarHistorial();
   </script>

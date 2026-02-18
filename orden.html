@@ -5,225 +5,419 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <title>Nueva Orden - KDS</title>
+  <title>Nueva Orden — Q'Chulada</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --chile: #C0392B;
+      --chile-deep: #922B21;
+      --terracotta: #D35400;
+      --marigold: #F39C12;
+      --marigold-light: #FDEBD0;
+      --forest: #1E8449;
+      --forest-deep: #196F3D;
+      --cream: #FFF8F0;
+      --sand: #FAF0E6;
+      --bark: #4A2C2A;
+      --bark-light: #6D4C41;
+      --clay: #F5E6D3;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
     }
-    
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(135deg, #FFF9C4 0%, #FFEB3B 100%);
-      padding: 20px;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      padding: 0;
       min-height: 100vh;
+      position: relative;
     }
-    
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(circle at 20% 80%, rgba(243, 156, 18, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(192, 57, 43, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(30, 132, 73, 0.04) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .papel-picado {
+      width: 100%;
+      height: 28px;
+      display: block;
+      background:
+        linear-gradient(135deg, var(--chile) 25%, transparent 25%) -14px 0,
+        linear-gradient(225deg, var(--marigold) 25%, transparent 25%) -14px 0,
+        linear-gradient(315deg, var(--forest) 25%, transparent 25%),
+        linear-gradient(45deg, var(--terracotta) 25%, transparent 25%);
+      background-size: 28px 28px;
+      background-color: var(--chile-deep);
+      position: relative;
+    }
+
+    .papel-picado::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0; right: 0;
+      height: 6px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--chile) 0px, var(--chile) 8px,
+        var(--marigold) 8px, var(--marigold) 16px,
+        var(--forest) 16px, var(--forest) 24px,
+        var(--terracotta) 24px, var(--terracotta) 32px
+      );
+      clip-path: polygon(
+        0% 0%, 4px 100%, 8px 0%, 12px 100%, 16px 0%, 20px 100%, 24px 0%, 28px 100%, 32px 0%,
+        36px 100%, 40px 0%, 44px 100%, 48px 0%, 52px 100%, 56px 0%, 60px 100%, 64px 0%,
+        68px 100%, 72px 0%, 76px 100%, 80px 0%, 84px 100%, 88px 0%, 92px 100%, 96px 0%,
+        100% 100%, 100% 0%
+      );
+    }
+
     .container {
       max-width: 800px;
       margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
     }
-    
+
     .header {
-      background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+      background: linear-gradient(135deg, var(--chile) 0%, var(--chile-deep) 100%);
       color: white;
-      padding: 25px;
+      padding: 28px 25px 22px;
       text-align: center;
-      border-radius: 12px;
-      margin-bottom: 25px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      border-radius: 0 0 16px 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 24px rgba(146, 43, 33, 0.3);
+      position: relative;
+      overflow: hidden;
     }
-    
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20z' fill='none' stroke='rgba(255,255,255,0.06)' stroke-width='1'/%3E%3C/svg%3E") repeat;
+    }
+
     .header h1 {
-      font-size: 32px;
-      margin-bottom: 5px;
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      font-weight: 900;
+      margin-bottom: 2px;
+      position: relative;
+      letter-spacing: -0.5px;
     }
-    
+
+    .header .subtitle {
+      font-size: 13px;
+      opacity: 0.85;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      position: relative;
+    }
+
     .panel {
       background: white;
-      padding: 25px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 24px;
+      border-radius: 14px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 12px rgba(74, 44, 42, 0.08);
+      border: 1px solid rgba(74, 44, 42, 0.06);
     }
-    
+
     .input-group {
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
-    
+
     label {
       display: block;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #333;
-      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: var(--bark);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    
+
     input, select {
       width: 100%;
-      padding: 14px;
-      border: 2px solid #E0E0E0;
-      border-radius: 8px;
+      padding: 14px 16px;
+      border: 2px solid var(--clay);
+      border-radius: 10px;
       font-size: 16px;
-      transition: border-color 0.3s;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--bark);
+      background: var(--cream);
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
-    
+
     input:focus, select:focus {
       outline: none;
-      border-color: #D32F2F;
+      border-color: var(--terracotta);
+      box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.12);
     }
-    
+
+    input::placeholder {
+      color: #B0A090;
+    }
+
     .contador {
-      background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+      background: linear-gradient(135deg, var(--forest) 0%, var(--forest-deep) 100%);
       color: white;
-      padding: 25px;
+      padding: 22px;
       text-align: center;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-radius: 14px;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 18px rgba(30, 132, 73, 0.25);
+      position: relative;
+      overflow: hidden;
     }
-    
+
+    .contador::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='1.5' fill='rgba(255,255,255,0.08)'/%3E%3C/svg%3E") repeat;
+    }
+
     .contador-numero {
-      font-size: 56px;
-      font-weight: bold;
+      font-family: 'Playfair Display', serif;
+      font-size: 52px;
+      font-weight: 900;
       line-height: 1;
+      position: relative;
     }
-    
+
     .contador-label {
-      font-size: 16px;
-      margin-top: 8px;
+      font-size: 13px;
+      margin-top: 6px;
       opacity: 0.9;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      position: relative;
     }
-    
+
     .bebidas-list {
-      background: #F5F5F5;
+      background: var(--sand);
       border-radius: 12px;
-      padding: 15px;
+      padding: 14px;
       max-height: 350px;
       overflow-y: auto;
+      border: 1px solid rgba(74, 44, 42, 0.06);
     }
-    
+
+    .bebidas-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .bebidas-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .bebidas-list::-webkit-scrollbar-thumb {
+      background: var(--clay);
+      border-radius: 3px;
+    }
+
     .bebida-item {
       background: white;
-      padding: 15px;
-      border-radius: 8px;
+      padding: 14px 16px;
+      border-radius: 10px;
       margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 4px rgba(74, 44, 42, 0.06);
+      border-left: 4px solid var(--marigold);
+      transition: transform 0.15s;
     }
-    
+
     .bebida-nombre {
-      font-size: 18px;
-      font-weight: bold;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--bark);
     }
-    
+
     .bebida-cantidad {
-      background: #D32F2F;
+      background: var(--chile);
       color: white;
-      padding: 4px 12px;
+      padding: 3px 11px;
       border-radius: 20px;
       margin-right: 10px;
-      font-weight: bold;
+      font-weight: 700;
+      font-size: 14px;
     }
-    
+
+    .section-title {
+      margin-bottom: 14px;
+      color: var(--bark);
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, var(--marigold), transparent);
+      border-radius: 1px;
+    }
+
     .btn {
       width: 100%;
-      padding: 16px;
+      padding: 15px;
       border: none;
-      border-radius: 8px;
-      font-size: 18px;
-      font-weight: bold;
+      border-radius: 10px;
+      font-size: 17px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
       cursor: pointer;
       margin-top: 10px;
       transition: all 0.2s;
+      letter-spacing: 0.3px;
     }
-    
+
     .btn-add {
-      background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+      background: linear-gradient(135deg, var(--forest) 0%, var(--forest-deep) 100%);
       color: white;
+      box-shadow: 0 4px 12px rgba(30, 132, 73, 0.2);
     }
-    
+
     .btn-submit {
-      background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+      background: linear-gradient(135deg, var(--chile) 0%, var(--chile-deep) 100%);
       color: white;
-      font-size: 20px;
+      font-size: 19px;
       padding: 18px;
+      box-shadow: 0 6px 20px rgba(192, 57, 43, 0.25);
+      letter-spacing: 0.5px;
     }
-    
+
     .btn:active {
-      transform: scale(0.98);
+      transform: scale(0.97);
     }
-    
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .btn-remove {
-      background: #F44336;
+      background: var(--chile);
       color: white;
-      padding: 8px 16px;
+      padding: 8px 14px;
       font-size: 14px;
-      border-radius: 6px;
+      border-radius: 8px;
       border: none;
       cursor: pointer;
+      font-weight: 700;
+      transition: background 0.2s;
     }
-    
+
+    .btn-remove:active {
+      background: var(--chile-deep);
+    }
+
+    .btn-historial {
+      background: linear-gradient(135deg, var(--bark) 0%, var(--bark-light) 100%);
+      color: white;
+      box-shadow: 0 3px 10px rgba(74, 44, 42, 0.15);
+      font-size: 15px;
+    }
+
     .mensaje {
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 20px;
+      padding: 16px;
+      border-radius: 10px;
+      margin-top: 18px;
       text-align: center;
       display: none;
-      font-weight: 500;
+      font-weight: 600;
+      animation: slideIn 0.3s ease;
     }
-    
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .exito {
-      background: #C8E6C9;
-      color: #2E7D32;
-      border: 2px solid #81C784;
+      background: #D5F5E3;
+      color: var(--forest-deep);
+      border: 2px solid rgba(30, 132, 73, 0.3);
     }
-    
+
     .error {
-      background: #FFCDD2;
-      color: #C62828;
-      border: 2px solid #EF5350;
+      background: #FADBD8;
+      color: var(--chile-deep);
+      border: 2px solid rgba(192, 57, 43, 0.3);
     }
-    
+
     .empty-state {
       text-align: center;
-      padding: 40px;
-      color: #999;
+      padding: 36px 20px;
+      color: #B0A090;
     }
-    
+
+    .empty-state p:first-child {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--bark-light);
+    }
+
     .loading {
       opacity: 0.5;
       pointer-events: none;
     }
+
+    @media (max-width: 480px) {
+      .container { padding: 14px; }
+      .header h1 { font-size: 28px; }
+      .contador-numero { font-size: 44px; }
+    }
   </style>
 </head>
 <body>
+  <div class="papel-picado"></div>
+
   <div class="container">
     <div class="header">
-      <h1>🍹 Nueva Orden</h1>
-      <p>Sistema KDS - Bar & Bebidas</p>
+      <h1>Q'Chulada</h1>
+      <p class="subtitle">Nueva Orden &mdash; Bar & Bebidas</p>
     </div>
 
     <div class="panel">
-  <div class="input-group">
-    <label>Ticket #:</label>
-    <input type="text" id="ticket" placeholder="001">
-  </div>
+      <div class="input-group">
+        <label>Ticket #:</label>
+        <input type="text" id="ticket" placeholder="001">
+      </div>
 
-  <div class="input-group">
-    <label>Nombre Cliente:</label>
-    <input type="text" id="cliente" placeholder="Ej: Juan Pérez">
-  </div>
-  
-  <!-- NUEVO: Botón de historial -->
-  <button class="btn btn-secondary" onclick="window.location.href='historial.html'" style="background: linear-gradient(135deg, #1976D2, #0D47A1); color: white;">
-    📜 Ver Historial
-  </button>
-</div>
+      <div class="input-group">
+        <label>Nombre Cliente:</label>
+        <input type="text" id="cliente" placeholder="Ej: Juan Pérez">
+      </div>
+
+      <button class="btn btn-historial" onclick="window.location.href='historial.html'">
+        Ver Historial
+      </button>
+    </div>
 
     <div class="contador">
       <div class="contador-numero" id="contador">0</div>
@@ -249,17 +443,17 @@
       </div>
 
       <button class="btn btn-add" onclick="agregarBebida()">
-        ➕ Agregar Bebida
+        Agregar Bebida
       </button>
     </div>
 
     <div class="panel">
-      <h3 style="margin-bottom: 15px; color: #333;">🛒 Bebidas en la Orden</h3>
+      <h3 class="section-title">Bebidas en la Orden</h3>
       <div class="bebidas-list" id="lista"></div>
     </div>
 
     <button class="btn btn-submit" id="btnEnviar" onclick="enviarOrden()">
-      🚀 Enviar Orden Completa
+      Enviar Orden Completa
     </button>
 
     <div class="mensaje" id="mensaje"></div>
@@ -270,111 +464,111 @@
     // CONFIGURACIÓN - IMPORTANTE: Cambiar esta URL
     // ==========================================
     const API_URL = 'https://script.google.com/macros/s/AKfycbwiHg2pF6Sd2CrQtlw7k1uhGPsuIgOK_di8ZPhZrir3F_XU6UhPWawfZgl1-CA4viI1/exec';
-    
+
     // ==========================================
     // ESTADO
     // ==========================================
     let bebidas = [];
-    
+
     // ==========================================
     // INICIALIZACIÓN
     // ==========================================
-    
+
     console.log('🚀 Iniciando Nueva Orden KDS');
     console.log('API URL:', API_URL);
-    
+
     // Cargar catálogo de bebidas
     cargarBebidas();
-    
+
     // Generar ticket automático
     generarTicket();
-    
+
     // Inicializar lista
     actualizarLista();
-    
+
     // ==========================================
     // FUNCIONES
     // ==========================================
-    
+
     async function cargarBebidas() {
       console.log('📋 Cargando catálogo de bebidas...');
-      
+
       try {
         const response = await fetch(API_URL + '?action=getBebidas&_=' + Date.now());
         const result = await response.json();
-        
+
         if (!result.success) {
           throw new Error(result.error);
         }
-        
+
         const select = document.getElementById('bebida');
         select.innerHTML = '<option value="">-- Seleccionar Bebida --</option>';
-        
+
         result.data.forEach(bebida => {
           const option = document.createElement('option');
           option.value = bebida;
           option.textContent = bebida;
           select.appendChild(option);
         });
-        
+
         console.log('✅ Bebidas cargadas:', result.data.length);
-        
+
       } catch (error) {
         console.error('❌ Error cargando bebidas:', error);
         const select = document.getElementById('bebida');
         select.innerHTML = '<option value="">Error al cargar bebidas</option>';
       }
     }
-    
+
     function generarTicket() {
       const ahora = new Date();
-      const ticket = String(ahora.getHours()).padStart(2, '0') + 
+      const ticket = String(ahora.getHours()).padStart(2, '0') +
                      String(ahora.getMinutes()).padStart(2, '0');
       document.getElementById('ticket').value = ticket;
     }
-    
+
     function agregarBebida() {
       const nombre = document.getElementById('bebida').value;
       const cantidad = parseInt(document.getElementById('cantidad').value);
       const detalles = document.getElementById('detalles').value;
-      
+
       if (!nombre) {
         alert('❌ Selecciona una bebida');
         return;
       }
-      
+
       if (cantidad < 1 || cantidad > 99) {
         alert('❌ Cantidad debe ser entre 1 y 99');
         return;
       }
-      
+
       bebidas.push({ nombre, cantidad, detalles });
-      
+
       console.log('➕ Bebida agregada:', { nombre, cantidad, detalles });
-      
+
       actualizarLista();
-      
+
       // Limpiar campos
       document.getElementById('bebida').value = '';
       document.getElementById('cantidad').value = '1';
       document.getElementById('detalles').value = '';
-      
+
       // Focus en bebida
       document.getElementById('bebida').focus();
     }
-    
+
     function eliminar(index) {
       console.log('🗑️ Eliminando bebida:', index);
       bebidas.splice(index, 1);
       actualizarLista();
     }
-    
+
     function actualizarLista() {
       const lista = document.getElementById('lista');
       const contador = document.getElementById('contador');
-      
+
       contador.textContent = bebidas.length;
-      
+
       if (bebidas.length === 0) {
         lista.innerHTML = `
           <div class="empty-state">
@@ -386,7 +580,7 @@
         `;
         return;
       }
-      
+
       lista.innerHTML = bebidas.map((b, i) => `
         <div class="bebida-item">
           <div>
@@ -394,8 +588,8 @@
               <span class="bebida-cantidad">${b.cantidad}x</span>
               ${b.nombre}
             </div>
-            ${b.detalles ? 
-              `<div style="font-size:14px;color:#666;margin-top:5px;">📝 ${b.detalles}</div>` 
+            ${b.detalles ?
+              `<div style="font-size:14px;color:#666;margin-top:5px;">📝 ${b.detalles}</div>`
               : ''}
           </div>
           <button class="btn-remove" onclick="eliminar(${i})">
@@ -404,85 +598,85 @@
         </div>
       `).join('');
     }
-    
+
     async function enviarOrden() {
       const ticket = document.getElementById('ticket').value.trim();
       const cliente = document.getElementById('cliente').value.trim();
-      
+
       if (!ticket) {
         alert('❌ Ingresa el número de ticket');
         document.getElementById('ticket').focus();
         return;
       }
-      
+
       if (!cliente) {
         alert('❌ Ingresa el nombre del cliente');
         document.getElementById('cliente').focus();
         return;
       }
-      
+
       if (bebidas.length === 0) {
         alert('❌ Agrega al menos una bebida a la orden');
         return;
       }
-      
+
       console.log('📤 Enviando orden:', { ticket, cliente, bebidas });
-      
+
       // Deshabilitar botón
       const btnEnviar = document.getElementById('btnEnviar');
       btnEnviar.disabled = true;
       btnEnviar.textContent = '⏳ Enviando...';
       document.body.classList.add('loading');
-      
+
       try {
         const data = {
           ticket: ticket,
           cliente: cliente,
           bebidas: bebidas
         };
-        
-        const url = API_URL + '?action=crearOrden&data=' + 
+
+        const url = API_URL + '?action=crearOrden&data=' +
                     encodeURIComponent(JSON.stringify(data));
-        
+
         const response = await fetch(url);
         const result = await response.json();
-        
+
         console.log('📦 Result:', result);
-        
+
         if (!result.success) {
           throw new Error(result.error);
         }
-        
+
         // Mostrar mensaje de éxito
         const mensaje = document.getElementById('mensaje');
         mensaje.textContent = '✅ ' + result.data.mensaje;
         mensaje.className = 'mensaje exito';
         mensaje.style.display = 'block';
-        
+
         console.log('✅ Orden creada exitosamente');
-        
+
         // Limpiar formulario
         bebidas = [];
         actualizarLista();
         document.getElementById('cliente').value = '';
         generarTicket();
-        
+
         // Ocultar mensaje después de 3 segundos
         setTimeout(() => {
           mensaje.style.display = 'none';
         }, 3000);
-        
+
         // Focus en cliente para siguiente orden
         document.getElementById('cliente').focus();
-        
+
       } catch (error) {
         console.error('❌ Error:', error);
-        
+
         const mensaje = document.getElementById('mensaje');
         mensaje.textContent = '❌ Error: ' + error.message;
         mensaje.className = 'mensaje error';
         mensaje.style.display = 'block';
-        
+
       } finally {
         // Re-habilitar botón
         btnEnviar.disabled = false;
@@ -490,7 +684,7 @@
         document.body.classList.remove('loading');
       }
     }
-    
+
     // Shortcuts de teclado
     document.addEventListener('keydown', function(e) {
       // Enter en campos = agregar bebida
@@ -500,7 +694,7 @@
           agregarBebida();
         }
       }
-      
+
       // Ctrl/Cmd + Enter = enviar orden
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         enviarOrden();
