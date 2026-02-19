@@ -370,9 +370,46 @@
 
   <script>
     // ==========================================
+    // UTILIDADES
+    // ==========================================
+    function escapeHtml(str) {
+      if (str == null) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // ==========================================
     // CONFIGURACIÓN - IMPORTANTE: Cambiar esta URL
     // ==========================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwiHg2pF6Sd2CrQtlw7k1uhGPsuIgOK_di8ZPhZrir3F_XU6UhPWawfZgl1-CA4viI1/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwhNRuVuu0Pa7fJ6TXfk7QD61hRfH9zjbPaSFZachmmYc608yAjGerq86iL25q_XzkG/exec';
+
+    // ==========================================
+    // AUTENTICACIÓN
+    // ==========================================
+    function getToken() {
+      let token = localStorage.getItem('kds_token');
+      if (!token) {
+        token = prompt('Ingrese la contraseña del sistema:');
+        if (token) localStorage.setItem('kds_token', token);
+      }
+      return token || '';
+    }
+
+    function handleAuthError(result) {
+      if (result && !result.success && result.error === 'Token inválido') {
+        localStorage.removeItem('kds_token');
+        alert('Contraseña incorrecta. La página se recargará.');
+        location.reload();
+        return true;
+      }
+      return false;
+    }
+
+    const TOKEN = getToken();
 
     let ordenesActuales = [];
     let audioContext;
@@ -493,7 +530,7 @@
       }
 
       try {
-        const url = API_URL + '?action=getOrdenes&_=' + Date.now();
+        const url = API_URL + '?action=getOrdenes&token=' + encodeURIComponent(TOKEN) + '&_=' + Date.now();
         console.log('📡 Fetching:', url);
 
         const response = await fetch(url);
@@ -506,6 +543,7 @@
         const result = await response.json();
         console.log('📦 Result:', result);
 
+        if (handleAuthError(result)) return;
         if (!result.success) {
           throw new Error(result.error || 'Error desconocido');
         }
@@ -536,7 +574,7 @@
         container.innerHTML = `
           <div class="error-state">
             <h3>Error al Cargar Órdenes</h3>
-            <p style="font-size: 16px; margin-top: 10px;">${error.message}</p>
+            <p style="font-size: 16px; margin-top: 10px;">${escapeHtml(error.message)}</p>
             <p style="font-size: 14px; margin-top: 10px; opacity: 0.7;">
               Verifica que la API esté configurada correctamente
             </p>
@@ -573,8 +611,8 @@
         <div class="orden-card">
           <div class="orden-header">
             <div>
-              <div class="orden-ticket">${orden.ticket}</div>
-              <div class="orden-cliente">${orden.cliente}</div>
+              <div class="orden-ticket">${escapeHtml(orden.ticket)}</div>
+              <div class="orden-cliente">${escapeHtml(orden.cliente)}</div>
             </div>
           </div>
 
@@ -582,15 +620,15 @@
             <div class="bebida-item">
               <div>
                 <span class="bebida-cantidad">${item.cantidad}x</span>
-                <span class="bebida-nombre">${item.bebida}</span>
+                <span class="bebida-nombre">${escapeHtml(item.bebida)}</span>
               </div>
               ${item.detalles ?
-                `<div class="bebida-detalles">📝 ${item.detalles}</div>`
+                `<div class="bebida-detalles">📝 ${escapeHtml(item.detalles)}</div>`
                 : ''}
             </div>
           `).join('')}
 
-          <button class="btn-completar" onclick="completarOrden(${orden.id}, '${orden.ticket}')">
+          <button class="btn-completar" data-id="${orden.id}" data-ticket="${escapeHtml(orden.ticket)}">
             ✓ Marcar como Completada
           </button>
         </div>
@@ -605,7 +643,7 @@
       }
 
       try {
-        const url = API_URL + '?action=completarOrden&ordenID=' + id;
+        const url = API_URL + '?action=completarOrden&ordenID=' + id + '&token=' + encodeURIComponent(TOKEN);
         console.log('📡 Completando:', url);
 
         const response = await fetch(url);
@@ -613,6 +651,7 @@
 
         console.log('📦 Result:', result);
 
+        if (handleAuthError(result)) return;
         if (!result.success) {
           throw new Error(result.error);
         }
@@ -634,6 +673,15 @@
 
     console.log('🚀 Iniciando Display KDS');
     console.log('API URL:', API_URL);
+
+    // Event delegation para botones de completar orden
+    document.getElementById('ordenes').addEventListener('click', function(e) {
+      const btn = e.target.closest('.btn-completar');
+      if (!btn) return;
+      const id = parseInt(btn.dataset.id);
+      const ticket = btn.dataset.ticket;
+      completarOrden(id, ticket);
+    });
 
     // Inicializar audio al primer click (requerido por navegadores)
     document.addEventListener('click', function iniciarAudio() {

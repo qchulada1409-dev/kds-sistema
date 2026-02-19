@@ -394,8 +394,45 @@
   </div>
 
   <script>
+    // ==========================================
+    // UTILIDADES
+    // ==========================================
+    function escapeHtml(str) {
+      if (str == null) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     // IMPORTANTE: Cambiar con tu URL de API
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwiHg2pF6Sd2CrQtlw7k1uhGPsuIgOK_di8ZPhZrir3F_XU6UhPWawfZgl1-CA4viI1/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwhNRuVuu0Pa7fJ6TXfk7QD61hRfH9zjbPaSFZachmmYc608yAjGerq86iL25q_XzkG/exec';
+
+    // ==========================================
+    // AUTENTICACIÓN
+    // ==========================================
+    function getToken() {
+      let token = localStorage.getItem('kds_token');
+      if (!token) {
+        token = prompt('Ingrese la contraseña del sistema:');
+        if (token) localStorage.setItem('kds_token', token);
+      }
+      return token || '';
+    }
+
+    function handleAuthError(result) {
+      if (result && !result.success && result.error === 'Token inválido') {
+        localStorage.removeItem('kds_token');
+        alert('Contraseña incorrecta. La página se recargará.');
+        location.reload();
+        return true;
+      }
+      return false;
+    }
+
+    const TOKEN = getToken();
 
     let ordenesHistorial = [];
 
@@ -407,7 +444,7 @@
 
       try {
         const limite = document.getElementById('filtroLimite').value;
-        const url = API_URL + '?action=getHistorial' +
+        const url = API_URL + '?action=getHistorial&token=' + encodeURIComponent(TOKEN) +
                     (limite ? '&limite=' + limite : '') +
                     '&_=' + Date.now();
 
@@ -422,6 +459,7 @@
         const result = await response.json();
         console.log('📦 Result:', result);
 
+        if (handleAuthError(result)) return;
         if (!result.success) {
           throw new Error(result.error || 'Error desconocido');
         }
@@ -441,7 +479,7 @@
           <div class="empty-state">
             <div class="empty-icon">⚠️</div>
             <p style="font-size:20px;font-weight:bold;color:#D32F2F;">Error al cargar historial</p>
-            <p style="margin-top:10px;">${error.message}</p>
+            <p style="margin-top:10px;">${escapeHtml(error.message)}</p>
             <button class="btn btn-primary" onclick="cargarHistorial()" style="margin-top:20px;">
               🔄 Reintentar
             </button>
@@ -479,7 +517,7 @@
           <div class="stat-label">Bebidas Servidas</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">${bebidaTop ? bebidaTop[0] : 'N/A'}</div>
+          <div class="stat-number">${bebidaTop ? escapeHtml(bebidaTop[0]) : 'N/A'}</div>
           <div class="stat-label">Bebida Más Pedida</div>
         </div>
       `;
@@ -515,8 +553,8 @@
           <div class="orden-card">
             <div class="orden-header">
               <div>
-                <div class="orden-ticket">${orden.ticket}</div>
-                <div class="orden-cliente">${orden.cliente}</div>
+                <div class="orden-ticket">${escapeHtml(orden.ticket)}</div>
+                <div class="orden-cliente">${escapeHtml(orden.cliente)}</div>
                 <div class="orden-fecha">📅 ${fechaStr} - ⏰ ${horaStr}</div>
               </div>
               <div class="completada-badge">✓ Completada</div>
@@ -526,10 +564,10 @@
               <div class="bebida-item">
                 <div>
                   <span class="bebida-cantidad">${item.cantidad}x</span>
-                  <span class="bebida-nombre">${item.bebida}</span>
+                  <span class="bebida-nombre">${escapeHtml(item.bebida)}</span>
                 </div>
                 ${item.detalles ?
-                  `<div class="bebida-detalles">📝 ${item.detalles}</div>`
+                  `<div class="bebida-detalles">📝 ${escapeHtml(item.detalles)}</div>`
                   : ''}
               </div>
             `).join('')}
