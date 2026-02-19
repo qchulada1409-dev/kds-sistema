@@ -221,6 +221,8 @@
     .stat-card:nth-child(2)::before { background: linear-gradient(90deg, var(--forest), var(--forest-deep)); }
     .stat-card:nth-child(3)::before { background: linear-gradient(90deg, var(--marigold), var(--terracotta)); }
     .stat-card:nth-child(4)::before { background: linear-gradient(90deg, var(--bark), var(--bark-light)); }
+    .stat-card:nth-child(5)::before { background: linear-gradient(90deg, #8E44AD, #6C3483); }
+    .stat-card:nth-child(6)::before { background: linear-gradient(90deg, #2980B9, #1A5276); }
 
     .stat-icon {
       width: 40px;
@@ -238,6 +240,35 @@
     .stat-card:nth-child(2) .stat-icon { background: rgba(30, 132, 73, 0.1); color: var(--forest); }
     .stat-card:nth-child(3) .stat-icon { background: rgba(243, 156, 18, 0.1); color: var(--marigold); }
     .stat-card:nth-child(4) .stat-icon { background: rgba(74, 44, 42, 0.1); color: var(--bark); }
+    .stat-card:nth-child(5) .stat-icon { background: rgba(142, 68, 173, 0.1); color: #8E44AD; }
+    .stat-card:nth-child(6) .stat-icon { background: rgba(41, 128, 185, 0.1); color: #2980B9; }
+
+    /* ===== WEEKLY COMPARISON TABLE ===== */
+    .comparison-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .comparison-table th { padding: 10px 14px; text-align: left; font-size: 13px; color: var(--bark-light); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--clay); }
+    .comparison-table td { padding: 12px 14px; font-size: 15px; font-weight: 600; color: var(--bark); border-bottom: 1px solid var(--clay); }
+    .comparison-table .change-positive { color: var(--forest); }
+    .comparison-table .change-negative { color: var(--chile); }
+
+    /* ===== LIVE STATS ===== */
+    .live-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--chile); text-transform: uppercase; letter-spacing: 1px; }
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--chile); animation: livePulse 1.5s ease-in-out infinite; }
+    @keyframes livePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* ===== PREP TIME BADGE ===== */
+    .prep-time-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      background: rgba(142, 68, 173, 0.1);
+      color: #8E44AD;
+      margin-top: 4px;
+    }
+    .prep-time-badge svg { width: 12px; height: 12px; }
 
     .stat-number {
       font-family: 'Playfair Display', serif;
@@ -493,6 +524,180 @@
 
     .nav-buttons { display: flex; gap: 10px; }
 
+    /* ===== AUTH MODAL ===== */
+    .auth-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(74, 44, 42, 0.9);
+      backdrop-filter: blur(12px);
+      z-index: 20000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-overlay.hidden { display: none; }
+
+    .auth-modal {
+      background: white;
+      padding: 40px 36px;
+      border-radius: 20px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+      animation: authIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes authIn {
+      from { opacity: 0; transform: scale(0.9) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .auth-modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--chile);
+      margin-bottom: 4px;
+    }
+
+    .auth-modal .auth-subtitle {
+      font-size: 14px;
+      color: var(--bark-light);
+      margin-bottom: 28px;
+      font-weight: 500;
+    }
+
+    .auth-pin-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .auth-pin-wrapper input {
+      width: 100%;
+      padding: 16px;
+      padding-right: 48px;
+      border: 2px solid var(--clay);
+      border-radius: 12px;
+      font-size: 18px;
+      font-family: 'DM Sans', sans-serif;
+      text-align: center;
+      letter-spacing: 4px;
+      color: var(--bark);
+      background: var(--cream);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .auth-pin-wrapper input:focus {
+      outline: none;
+      border-color: var(--terracotta);
+      box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.12);
+    }
+
+    .auth-pin-wrapper input.auth-error-input {
+      border-color: var(--chile);
+      box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+      animation: authShake 0.4s ease;
+    }
+
+    .auth-toggle-pw {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: var(--bark-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+
+    .auth-toggle-pw:hover {
+      opacity: 1;
+    }
+
+    @keyframes authShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .auth-remember {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--bark-light);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .auth-remember input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--forest);
+      cursor: pointer;
+    }
+
+    .auth-btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      margin-top: 20px;
+      background: linear-gradient(135deg, var(--chile) 0%, var(--chile-deep) 100%);
+      color: white;
+      box-shadow: 0 4px 14px rgba(192, 57, 43, 0.25);
+      transition: transform 0.15s;
+    }
+
+    .auth-btn:active { transform: scale(0.97); }
+    .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .auth-error-msg {
+      color: var(--chile);
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 12px;
+      min-height: 20px;
+    }
+
+    .btn-logout {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.2s;
+      z-index: 2;
+    }
+
+    .btn-logout:hover { background: rgba(255,255,255,0.25); }
+    .btn-logout svg { width: 14px; height: 14px; }
+
     @media (max-width: 768px) {
       .chart-row { grid-template-columns: 1fr; }
     }
@@ -511,10 +716,38 @@
   </style>
 </head>
 <body>
+  <!-- Auth Modal -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-modal">
+      <h2>Q'Chulada</h2>
+      <p class="auth-subtitle">Ingrese la contrase&ntilde;a del sistema</p>
+      <div class="auth-pin-wrapper">
+        <input type="password" id="authPin" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="off">
+        <button type="button" class="auth-toggle-pw" onclick="togglePasswordVisibility()" id="authTogglePw" aria-label="Mostrar contraseña">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="eyeIcon">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+            <line x1="1" y1="1" x2="23" y2="23" id="eyeSlash"/>
+          </svg>
+        </button>
+      </div>
+      <label class="auth-remember">
+        <input type="checkbox" id="authRemember" checked>
+        Recordar en este dispositivo
+      </label>
+      <button class="auth-btn" id="authBtn" onclick="autenticarModal()">Ingresar</button>
+      <div class="auth-error-msg" id="authError"></div>
+    </div>
+  </div>
+
   <div class="papel-picado"></div>
 
   <div class="main-wrap">
     <div class="header">
+      <button class="btn-logout" onclick="logout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Salir
+      </button>
       <div class="brand">Q'Chulada</div>
       <h1>Dashboard</h1>
       <p id="timestamp">Cargando...</p>
@@ -547,11 +780,19 @@
 
     <!-- Tab navigation -->
     <div class="tab-bar">
-      <button class="tab-btn active" onclick="switchTab('dashboard')">
+      <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M18 9l-5 5-2-2-4 4"/></svg>
         Dashboard
       </button>
-      <button class="tab-btn" onclick="switchTab('historial')">
+      <button class="tab-btn" data-tab="envivo" onclick="switchTab('envivo')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        En Vivo
+      </button>
+      <button class="tab-btn" data-tab="reportes" onclick="switchTab('reportes')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        Reportes
+      </button>
+      <button class="tab-btn" data-tab="historial" onclick="switchTab('historial')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         Historial
       </button>
@@ -594,6 +835,63 @@
       </div>
     </div>
 
+    <!-- TAB: En Vivo -->
+    <div class="tab-content" id="tab-envivo">
+      <div style="text-align:center;margin-bottom:16px;">
+        <span class="live-indicator"><span class="live-dot"></span> Actualizando en vivo</span>
+      </div>
+      <div class="stats-grid" id="liveStats"></div>
+      <div class="chart-row">
+        <div class="chart-panel">
+          <div class="chart-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+            Ventas Acumuladas del Dia
+          </div>
+          <canvas id="salesCanvas" height="200" style="width:100%;"></canvas>
+        </div>
+        <div class="chart-panel">
+          <div class="chart-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Tendencia Ahora
+          </div>
+          <div id="trendingNow" class="ranking-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Reportes -->
+    <div class="tab-content" id="tab-reportes">
+      <div style="margin-bottom:16px;">
+        <button class="btn btn-primary" onclick="exportCSV()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Exportar CSV
+        </button>
+      </div>
+      <div class="chart-row">
+        <div class="chart-panel">
+          <div class="chart-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Ventas por Hora
+          </div>
+          <div id="chartPorHora" class="bar-chart"></div>
+        </div>
+        <div class="chart-panel">
+          <div class="chart-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Ventas por Dia de Semana
+          </div>
+          <div id="chartPorDia" class="bar-chart"></div>
+        </div>
+      </div>
+      <div class="chart-panel" style="margin-bottom:24px;">
+        <div class="chart-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Comparativa Semanal
+        </div>
+        <div id="weeklyComparison"></div>
+      </div>
+    </div>
+
     <!-- TAB: Historial -->
     <div class="tab-content" id="tab-historial">
       <div id="historial"></div>
@@ -622,31 +920,119 @@
     };
 
     // IMPORTANTE: Cambiar con tu URL de API
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwhNRuVuu0Pa7fJ6TXfk7QD61hRfH9zjbPaSFZachmmYc608yAjGerq86iL25q_XzkG/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzLo3V8hIBs3-_HLpAsdNfog5pFURbvyDPo0zrSY_f42zUkUnJYGm7I56huNvahaFV_/exec';
 
     // ==========================================
     // AUTENTICACION
     // ==========================================
-    function getToken() {
-      let token = localStorage.getItem('kds_token');
-      if (!token) {
-        token = prompt('Ingrese la contrasena del sistema:');
-        if (token) localStorage.setItem('kds_token', token);
+    let TOKEN = '';
+
+    function getStoredToken() {
+      const token = localStorage.getItem('kds_token');
+      const expiry = localStorage.getItem('kds_token_expiry');
+      if (token && expiry && Date.now() < parseInt(expiry)) {
+        return token;
       }
-      return token || '';
+      if (token && !expiry) {
+        localStorage.removeItem('kds_token');
+      }
+      return null;
+    }
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById('authPin');
+      const slash = document.getElementById('eyeSlash');
+      if (input.type === 'password') {
+        input.type = 'text';
+        slash.style.display = 'none';
+      } else {
+        input.type = 'password';
+        slash.style.display = '';
+      }
+    }
+
+    function showAuthModal() {
+      document.getElementById('authOverlay').classList.remove('hidden');
+      const pin = document.getElementById('authPin');
+      pin.value = '';
+      pin.type = 'password';
+      document.getElementById('eyeSlash').style.display = '';
+      document.getElementById('authError').textContent = '';
+      pin.focus();
+    }
+
+    function hideAuthModal() {
+      document.getElementById('authOverlay').classList.add('hidden');
+    }
+
+    async function autenticarModal() {
+      const pin = document.getElementById('authPin').value.trim();
+      const remember = document.getElementById('authRemember').checked;
+      const errorEl = document.getElementById('authError');
+      const btn = document.getElementById('authBtn');
+
+      if (!pin) {
+        errorEl.textContent = 'Ingrese la contrase\u00f1a';
+        document.getElementById('authPin').classList.add('auth-error-input');
+        setTimeout(() => document.getElementById('authPin').classList.remove('auth-error-input'), 400);
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Verificando...';
+      errorEl.textContent = '';
+
+      try {
+        const res = await fetch(API_URL + '?action=getBebidas&token=' + encodeURIComponent(pin) + '&_=' + Date.now());
+        const result = await res.json();
+
+        if (!result.success) {
+          errorEl.textContent = 'Contrase\u00f1a incorrecta';
+          document.getElementById('authPin').classList.add('auth-error-input');
+          setTimeout(() => document.getElementById('authPin').classList.remove('auth-error-input'), 400);
+          document.getElementById('authPin').value = '';
+          document.getElementById('authPin').focus();
+          return;
+        }
+
+        TOKEN = pin;
+        localStorage.setItem('kds_token', pin);
+        if (remember) {
+          localStorage.setItem('kds_token_expiry', (Date.now() + 7 * 24 * 60 * 60 * 1000).toString());
+        } else {
+          localStorage.setItem('kds_token_expiry', (Date.now() + 12 * 60 * 60 * 1000).toString());
+        }
+        hideAuthModal();
+        inicializarApp();
+      } catch (e) {
+        errorEl.textContent = 'Error de conexi\u00f3n. Intente de nuevo.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Ingresar';
+      }
     }
 
     function handleAuthError(result) {
-      if (result && !result.success && result.error === 'Token invalido') {
+      if (result && !result.success && (result.error === 'Token inv\u00e1lido' || result.error === 'Token invalido')) {
         localStorage.removeItem('kds_token');
-        alert('Contrasena incorrecta. La pagina se recargara.');
-        location.reload();
+        localStorage.removeItem('kds_token_expiry');
+        showAuthModal();
         return true;
       }
       return false;
     }
 
-    const TOKEN = getToken();
+    function logout() {
+      localStorage.removeItem('kds_token');
+      localStorage.removeItem('kds_token_expiry');
+      TOKEN = '';
+      showAuthModal();
+    }
+
+    // Enter key en auth modal
+    document.getElementById('authPin').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') autenticarModal();
+    });
 
     let ordenesHistorial = [];
     let bebidasCatalogo = [];
@@ -654,12 +1040,28 @@
     // ==========================================
     // TABS
     // ==========================================
+    let liveInterval = null;
+
     function switchTab(tab) {
-      document.querySelectorAll('.tab-btn').forEach((btn, i) => {
-        btn.classList.toggle('active', (i === 0 && tab === 'dashboard') || (i === 1 && tab === 'historial'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
       });
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.getElementById('tab-' + tab).classList.add('active');
+
+      // Live polling control
+      if (tab === 'envivo') {
+        loadLiveData();
+        if (liveInterval) clearInterval(liveInterval);
+        liveInterval = setInterval(loadLiveData, 15000);
+      } else {
+        if (liveInterval) { clearInterval(liveInterval); liveInterval = null; }
+      }
+
+      // Render reportes on first visit
+      if (tab === 'reportes' && ordenesHistorial.length > 0) {
+        renderReportes();
+      }
     }
 
     // ==========================================
@@ -743,6 +1145,26 @@
         });
       });
 
+      // Prep time calculations
+      const hoy = new Date().toDateString();
+      const tiemposPrep = [];
+      const tiemposHoy = [];
+      ordenesHistorial.forEach(orden => {
+        if (orden.timestamp && orden.timestampCompletada) {
+          const created = new Date(orden.timestamp).getTime();
+          const completed = new Date(orden.timestampCompletada).getTime();
+          const diffMin = (completed - created) / 60000;
+          if (diffMin > 0 && diffMin < 480) {
+            tiemposPrep.push(diffMin);
+            if (new Date(orden.timestamp).toDateString() === hoy) {
+              tiemposHoy.push(diffMin);
+            }
+          }
+        }
+      });
+      const avgPrepTime = tiemposPrep.length > 0 ? Math.round(tiemposPrep.reduce((s, t) => s + t, 0) / tiemposPrep.length) : 0;
+      const slowestToday = tiemposHoy.length > 0 ? Math.round(Math.max(...tiemposHoy)) : 0;
+
       // Stats cards
       const bebidaTop = Object.entries(bebidasCount).sort((a, b) => b[1] - a[1])[0];
       document.getElementById('stats').innerHTML = `
@@ -765,6 +1187,16 @@
           <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
           <div class="stat-number">\u20A1${totalIngresos.toLocaleString()}</div>
           <div class="stat-label">Ingresos Estimados</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="stat-number">${avgPrepTime > 0 ? avgPrepTime + ' min' : 'N/A'}</div>
+          <div class="stat-label">Tiempo Promedio</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div class="stat-number">${slowestToday > 0 ? slowestToday + ' min' : 'N/A'}</div>
+          <div class="stat-label">Mas Lenta Hoy</div>
         </div>
       `;
 
@@ -868,6 +1300,14 @@
         const fechaStr = fecha.toLocaleDateString('es-CR', { day: '2-digit', month: '2-digit', year: 'numeric' });
         const horaStr = fecha.toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' });
 
+        let prepTimeHtml = '';
+        if (orden.timestamp && orden.timestampCompletada) {
+          const prepMin = Math.round((new Date(orden.timestampCompletada) - new Date(orden.timestamp)) / 60000);
+          if (prepMin > 0 && prepMin < 480) {
+            prepTimeHtml = '<div class="prep-time-badge">' + ICON.clock + ' Preparacion: ' + prepMin + ' min</div>';
+          }
+        }
+
         return `
           <div class="orden-card">
             <div class="orden-header">
@@ -875,6 +1315,7 @@
                 <div class="orden-ticket">${escapeHtml(orden.ticket)}</div>
                 <div class="orden-cliente">${escapeHtml(orden.cliente)}</div>
                 <div class="orden-fecha">${ICON.calendar} ${fechaStr} &nbsp; ${ICON.clock} ${horaStr}</div>
+                ${prepTimeHtml}
               </div>
               <div class="completada-badge">${ICON.check} Completada</div>
             </div>
@@ -895,12 +1336,291 @@
       }).join('');
     }
 
+    // ==========================================
+    // REPORTES TAB
+    // ==========================================
+    function renderReportes() {
+      if (!ordenesHistorial.length) return;
+
+      const catalogLookup = {};
+      bebidasCatalogo.forEach(b => {
+        catalogLookup[b.nombre] = { precio: b.precio, categoria: String(b.categoria || '').trim().toUpperCase() };
+      });
+
+      // Sales by hour
+      const hourCounts = {};
+      for (let h = 0; h < 24; h++) hourCounts[h] = 0;
+      ordenesHistorial.forEach(o => {
+        const h = new Date(o.timestamp).getHours();
+        o.items.forEach(item => {
+          const info = catalogLookup[item.bebida];
+          hourCounts[h] += info ? info.precio * item.cantidad : 0;
+        });
+      });
+      const maxHour = Math.max(...Object.values(hourCounts)) || 1;
+      const hoursWithData = Object.entries(hourCounts).filter(([, v]) => v > 0);
+      document.getElementById('chartPorHora').innerHTML = hoursWithData.map(([h, val]) => {
+        const pct = Math.max((val / maxHour) * 100, 8);
+        return '<div class="bar-row"><div class="bar-label">' + String(h).padStart(2, '0') + ':00</div><div class="bar-track"><div class="bar-fill cat-bebidas" style="width:' + pct + '%">\u20A1' + Math.round(val).toLocaleString() + '</div></div></div>';
+      }).join('') || '<p style="color:#999;text-align:center;padding:20px;">Sin datos</p>';
+
+      // Sales by day of week
+      const dayNames = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+      const dayCounts = [0, 0, 0, 0, 0, 0, 0];
+      ordenesHistorial.forEach(o => {
+        const d = new Date(o.timestamp).getDay();
+        o.items.forEach(item => {
+          const info = catalogLookup[item.bebida];
+          dayCounts[d] += info ? info.precio * item.cantidad : 0;
+        });
+      });
+      const maxDay = Math.max(...dayCounts) || 1;
+      const dayColors = ['cat-shots', 'cat-cocteles', 'cat-bebidas', 'cat-bebidas', 'cat-bebidas', 'cat-cocteles', 'cat-shots'];
+      document.getElementById('chartPorDia').innerHTML = dayCounts.map((val, i) => {
+        const pct = Math.max((val / maxDay) * 100, 8);
+        return '<div class="bar-row"><div class="bar-label">' + dayNames[i] + '</div><div class="bar-track"><div class="bar-fill ' + dayColors[i] + '" style="width:' + pct + '%">\u20A1' + Math.round(val).toLocaleString() + '</div></div></div>';
+      }).join('');
+
+      // Weekly comparison
+      const now = new Date();
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+      const startOfLastWeek = new Date(startOfWeek);
+      startOfLastWeek.setDate(startOfLastWeek.getDate() - 7);
+
+      let thisWeekRevenue = 0, lastWeekRevenue = 0;
+      let thisWeekOrders = 0, lastWeekOrders = 0;
+      let thisWeekBebidas = 0, lastWeekBebidas = 0;
+
+      ordenesHistorial.forEach(o => {
+        const t = new Date(o.timestamp).getTime();
+        let orderRevenue = 0;
+        let orderBebidas = 0;
+        o.items.forEach(item => {
+          const info = catalogLookup[item.bebida];
+          orderRevenue += info ? info.precio * item.cantidad : 0;
+          orderBebidas += item.cantidad;
+        });
+        if (t >= startOfWeek.getTime()) {
+          thisWeekRevenue += orderRevenue;
+          thisWeekOrders++;
+          thisWeekBebidas += orderBebidas;
+        } else if (t >= startOfLastWeek.getTime() && t < startOfWeek.getTime()) {
+          lastWeekRevenue += orderRevenue;
+          lastWeekOrders++;
+          lastWeekBebidas += orderBebidas;
+        }
+      });
+
+      function pctChange(curr, prev) {
+        if (prev === 0) return curr > 0 ? '+100%' : '0%';
+        const change = ((curr - prev) / prev * 100).toFixed(0);
+        return (change > 0 ? '+' : '') + change + '%';
+      }
+      function changeClass(curr, prev) {
+        return curr >= prev ? 'change-positive' : 'change-negative';
+      }
+
+      document.getElementById('weeklyComparison').innerHTML = `
+        <table class="comparison-table">
+          <thead><tr><th>Metrica</th><th>Semana Actual</th><th>Semana Anterior</th><th>Cambio</th></tr></thead>
+          <tbody>
+            <tr><td>Ordenes</td><td>${thisWeekOrders}</td><td>${lastWeekOrders}</td><td class="${changeClass(thisWeekOrders, lastWeekOrders)}">${pctChange(thisWeekOrders, lastWeekOrders)}</td></tr>
+            <tr><td>Bebidas</td><td>${thisWeekBebidas}</td><td>${lastWeekBebidas}</td><td class="${changeClass(thisWeekBebidas, lastWeekBebidas)}">${pctChange(thisWeekBebidas, lastWeekBebidas)}</td></tr>
+            <tr><td>Ingresos</td><td>\u20A1${Math.round(thisWeekRevenue).toLocaleString()}</td><td>\u20A1${Math.round(lastWeekRevenue).toLocaleString()}</td><td class="${changeClass(thisWeekRevenue, lastWeekRevenue)}">${pctChange(thisWeekRevenue, lastWeekRevenue)}</td></tr>
+          </tbody>
+        </table>
+      `;
+    }
+
+    // ==========================================
+    // EN VIVO TAB
+    // ==========================================
+    async function loadLiveData() {
+      try {
+        const [pendingRes, histRes] = await Promise.all([
+          fetch(API_URL + '?action=getOrdenes&token=' + encodeURIComponent(TOKEN) + '&_=' + Date.now()),
+          fetch(API_URL + '?action=getHistorial&token=' + encodeURIComponent(TOKEN) + '&limite=200&_=' + Date.now())
+        ]);
+        const pendingResult = await pendingRes.json();
+        const histResult = await histRes.json();
+
+        if (handleAuthError(pendingResult) || handleAuthError(histResult)) return;
+
+        const pending = pendingResult.success ? pendingResult.data : [];
+        const completed = histResult.success ? histResult.data : [];
+
+        const catalogLookup = {};
+        bebidasCatalogo.forEach(b => {
+          catalogLookup[b.nombre] = { precio: b.precio, categoria: String(b.categoria || '').trim().toUpperCase() };
+        });
+
+        // Today's orders
+        const hoy = new Date().toDateString();
+        const todayOrders = completed.filter(o => new Date(o.timestamp).toDateString() === hoy);
+        let todaySales = 0;
+        todayOrders.forEach(o => {
+          o.items.forEach(item => {
+            const info = catalogLookup[item.bebida];
+            if (info) todaySales += info.precio * item.cantidad;
+          });
+        });
+        const avgTicket = todayOrders.length > 0 ? Math.round(todaySales / todayOrders.length) : 0;
+
+        // Best hour today
+        const hourSales = {};
+        todayOrders.forEach(o => {
+          const h = new Date(o.timestamp).getHours();
+          o.items.forEach(item => {
+            const info = catalogLookup[item.bebida];
+            hourSales[h] = (hourSales[h] || 0) + (info ? info.precio * item.cantidad : 0);
+          });
+        });
+        const bestHourEntry = Object.entries(hourSales).sort((a, b) => b[1] - a[1])[0];
+        const bestHour = bestHourEntry ? String(bestHourEntry[0]).padStart(2, '0') + ':00' : 'N/A';
+
+        // Live stats
+        document.getElementById('liveStats').innerHTML = `
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div class="stat-number">${pending.length}</div>
+            <div class="stat-label">Ordenes Activas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="stat-number">\u20A1${Math.round(todaySales).toLocaleString()}</div>
+            <div class="stat-label">Ventas del Dia</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+            <div class="stat-number">\u20A1${avgTicket.toLocaleString()}</div>
+            <div class="stat-label">Ticket Promedio</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+            <div class="stat-number" style="font-size:22px;">${bestHour}</div>
+            <div class="stat-label">Mejor Hora</div>
+          </div>
+        `;
+
+        // Cumulative sales chart (canvas)
+        renderSalesCanvas(todayOrders, catalogLookup);
+
+        // Trending now (last 2 hours)
+        const twoHoursAgo = Date.now() - 2 * 60 * 60 * 1000;
+        const recentBebidas = {};
+        [...completed, ...pending].forEach(o => {
+          if (new Date(o.timestamp).getTime() >= twoHoursAgo) {
+            (o.items || []).forEach(item => {
+              recentBebidas[item.bebida] = (recentBebidas[item.bebida] || 0) + item.cantidad;
+            });
+          }
+        });
+        const trending = Object.entries(recentBebidas).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        document.getElementById('trendingNow').innerHTML = trending.length > 0 ? trending.map(([name, count], i) => `
+          <div class="ranking-item">
+            <div class="ranking-pos">${i + 1}</div>
+            <div class="ranking-name">${escapeHtml(name)}</div>
+            <div class="ranking-value">${count}x</div>
+          </div>
+        `).join('') : '<p style="color:#999;text-align:center;padding:20px;">Sin actividad reciente</p>';
+
+      } catch (e) {
+        console.error('Error en live data:', e);
+      }
+    }
+
+    function renderSalesCanvas(todayOrders, catalogLookup) {
+      const canvas = document.getElementById('salesCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width - 48;
+      canvas.height = 200;
+
+      const hourData = new Array(24).fill(0);
+      todayOrders.forEach(o => {
+        const h = new Date(o.timestamp).getHours();
+        o.items.forEach(item => {
+          const info = catalogLookup[item.bebida];
+          hourData[h] += info ? info.precio * item.cantidad : 0;
+        });
+      });
+
+      const currentHour = new Date().getHours();
+      const maxVal = Math.max(...hourData) || 1;
+      const barWidth = Math.floor(canvas.width / 24) - 2;
+      const chartHeight = canvas.height - 30;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let h = 0; h <= currentHour; h++) {
+        const x = h * (barWidth + 2);
+        const barH = (hourData[h] / maxVal) * chartHeight;
+        const y = chartHeight - barH;
+
+        ctx.fillStyle = hourData[h] > 0 ? '#D35400' : '#F5E6D3';
+        ctx.beginPath();
+        ctx.roundRect(x, y, barWidth, barH || 2, 3);
+        ctx.fill();
+
+        // Hour label
+        if (h % 3 === 0) {
+          ctx.fillStyle = '#6D4C41';
+          ctx.font = '10px DM Sans';
+          ctx.textAlign = 'center';
+          ctx.fillText(String(h).padStart(2, '0'), x + barWidth / 2, canvas.height - 2);
+        }
+      }
+    }
+
+    // ==========================================
+    // EXPORTAR CSV
+    // ==========================================
+    function exportCSV() {
+      if (!ordenesHistorial.length) return;
+
+      let csv = 'Ticket,Cliente,FechaCreacion,FechaCompletada,Bebida,Cantidad,Detalles\n';
+      ordenesHistorial.forEach(orden => {
+        orden.items.forEach(item => {
+          csv += [
+            orden.ticket,
+            orden.cliente,
+            orden.timestamp || '',
+            orden.timestampCompletada || '',
+            item.bebida,
+            item.cantidad,
+            item.detalles || ''
+          ].map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',') + '\n';
+        });
+      });
+
+      const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'qchulada_reporte_' + new Date().toISOString().slice(0, 10) + '.csv';
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
     function irA(pagina) {
       window.location.href = pagina;
     }
 
-    // Cargar al inicio
-    cargarHistorial();
+    function inicializarApp() {
+      cargarHistorial();
+    }
+
+    // Check stored token on load
+    const storedToken = getStoredToken();
+    if (storedToken) {
+      TOKEN = storedToken;
+      hideAuthModal();
+      inicializarApp();
+    } else {
+      showAuthModal();
+    }
   </script>
 </body>
 </html>

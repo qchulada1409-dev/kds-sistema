@@ -123,13 +123,14 @@ function obtenerOrdenesPendientes() {
     if (itemsOrden.length > 0) {
       resultado.push({
         id: ordenID,
+        timestamp: ordenes[i][1],
         ticket: ordenes[i][2],
         cliente: ordenes[i][3],
         items: itemsOrden
       });
     }
   }
-  
+
   return resultado;
 }
 
@@ -137,10 +138,11 @@ function completarOrden(ordenID) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const ordenesSheet = ss.getSheetByName('Órdenes');
   const data = ordenesSheet.getDataRange().getValues();
-  
+
   for (let i = 1; i < data.length; i++) {
     if (data[i][0] === ordenID) {
       ordenesSheet.getRange(i + 1, 5).setValue('Completada');
+      ordenesSheet.getRange(i + 1, 6).setValue(new Date());
       return;
     }
   }
@@ -226,6 +228,7 @@ function obtenerHistorial(limite) {
           ticket: ordenes[i][2],
           cliente: ordenes[i][3],
           timestamp: ordenes[i][1],
+          timestampCompletada: ordenes[i][5] || null,
           items: itemsOrden
         });
       }

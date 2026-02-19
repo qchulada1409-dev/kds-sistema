@@ -467,6 +467,245 @@
       pointer-events: none;
     }
 
+    /* ===== AUTH MODAL ===== */
+    .auth-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(74, 44, 42, 0.9);
+      backdrop-filter: blur(12px);
+      z-index: 20000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-overlay.hidden { display: none; }
+
+    .auth-modal {
+      background: white;
+      padding: 40px 36px;
+      border-radius: 20px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+      animation: authIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes authIn {
+      from { opacity: 0; transform: scale(0.9) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .auth-modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--chile);
+      margin-bottom: 4px;
+    }
+
+    .auth-modal .auth-subtitle {
+      font-size: 14px;
+      color: var(--bark-light);
+      margin-bottom: 28px;
+      font-weight: 500;
+    }
+
+    .auth-pin-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .auth-pin-wrapper input {
+      width: 100%;
+      padding: 16px;
+      padding-right: 48px;
+      border: 2px solid var(--clay);
+      border-radius: 12px;
+      font-size: 18px;
+      font-family: 'DM Sans', sans-serif;
+      text-align: center;
+      letter-spacing: 4px;
+      color: var(--bark);
+      background: var(--cream);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .auth-pin-wrapper input:focus {
+      outline: none;
+      border-color: var(--terracotta);
+      box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.12);
+    }
+
+    .auth-pin-wrapper input.auth-error-input {
+      border-color: var(--chile);
+      box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+      animation: authShake 0.4s ease;
+    }
+
+    .auth-toggle-pw {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: var(--bark-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+
+    .auth-toggle-pw:hover {
+      opacity: 1;
+    }
+
+    @keyframes authShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .auth-remember {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--bark-light);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .auth-remember input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--forest);
+      cursor: pointer;
+    }
+
+    .auth-btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      margin-top: 20px;
+      background: linear-gradient(135deg, var(--chile) 0%, var(--chile-deep) 100%);
+      color: white;
+      box-shadow: 0 4px 14px rgba(192, 57, 43, 0.25);
+      transition: transform 0.15s;
+    }
+
+    .auth-btn:active { transform: scale(0.97); }
+    .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .auth-error-msg {
+      color: var(--chile);
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 12px;
+      min-height: 20px;
+    }
+
+    /* ===== LOGOUT BUTTON ===== */
+    .btn-logout {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.2s;
+      z-index: 2;
+    }
+
+    .btn-logout:hover { background: rgba(255,255,255,0.25); }
+    .btn-logout svg { width: 14px; height: 14px; }
+
+    /* ===== SEARCH DROPDOWN ===== */
+    .search-container {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search-results {
+      position: absolute;
+      top: 100%;
+      left: 0; right: 0;
+      background: white;
+      border: 2px solid var(--clay);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      max-height: 280px;
+      overflow-y: auto;
+      z-index: 100;
+      display: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    .search-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--clay);
+      transition: background 0.15s;
+    }
+
+    .search-item:hover { background: var(--sand); }
+    .search-item:last-child { border-bottom: none; }
+
+    .search-name { font-weight: 600; color: var(--bark); font-size: 15px; flex: 1; }
+    .search-price { color: var(--forest); font-weight: 700; font-size: 14px; white-space: nowrap; }
+    .search-cat { font-size: 11px; color: var(--bark-light); background: var(--clay); padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+    .search-empty { padding: 16px; text-align: center; color: #999; font-size: 14px; }
+
+    /* ===== CONNECTION STATUS ===== */
+    .connection-status {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      z-index: 2;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #27AE60;
+    }
+
+    .connection-status.offline .status-dot { background: var(--chile); }
+    .connection-status.offline .status-text { color: rgba(255,255,255,0.9); }
+
     @media (max-width: 480px) {
       .container { padding: 14px; }
       .header h1 { font-size: 28px; }
@@ -475,11 +714,43 @@
   </style>
 </head>
 <body>
+  <!-- Auth Modal -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-modal">
+      <h2>Q'Chulada</h2>
+      <p class="auth-subtitle">Ingrese la contrase&ntilde;a del sistema</p>
+      <div class="auth-pin-wrapper">
+        <input type="password" id="authPin" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="off">
+        <button type="button" class="auth-toggle-pw" onclick="togglePasswordVisibility()" id="authTogglePw" aria-label="Mostrar contraseña">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="eyeIcon">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+            <line x1="1" y1="1" x2="23" y2="23" id="eyeSlash"/>
+          </svg>
+        </button>
+      </div>
+      <label class="auth-remember">
+        <input type="checkbox" id="authRemember" checked>
+        Recordar en este dispositivo
+      </label>
+      <button class="auth-btn" id="authBtn" onclick="autenticarModal()">Ingresar</button>
+      <div class="auth-error-msg" id="authError"></div>
+    </div>
+  </div>
+
   <div class="papel-picado"></div>
   <div class="toast-container" id="toastContainer"></div>
 
   <div class="container">
     <div class="header">
+      <div class="connection-status" id="connectionStatus">
+        <span class="status-dot"></span>
+        <span class="status-text">Conectado</span>
+      </div>
+      <button class="btn-logout" onclick="logout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Salir
+      </button>
       <h1>Q'Chulada</h1>
       <p class="subtitle">Nueva Orden &mdash; Bar & Bebidas</p>
     </div>
@@ -509,7 +780,11 @@
     <div class="panel">
       <div class="input-group">
         <label>Bebida:</label>
-        <select id="bebida">
+        <div class="search-container">
+          <input type="text" id="bebidaSearch" placeholder="Buscar bebida..." autocomplete="off">
+          <div class="search-results" id="searchResults"></div>
+        </div>
+        <select id="bebida" style="margin-top:8px;">
           <option value="">-- Cargando... --</option>
         </select>
       </div>
@@ -581,31 +856,122 @@
     // ==========================================
     // CONFIGURACION
     // ==========================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwhNRuVuu0Pa7fJ6TXfk7QD61hRfH9zjbPaSFZachmmYc608yAjGerq86iL25q_XzkG/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzLo3V8hIBs3-_HLpAsdNfog5pFURbvyDPo0zrSY_f42zUkUnJYGm7I56huNvahaFV_/exec';
 
     // ==========================================
     // AUTENTICACION
     // ==========================================
-    function getToken() {
-      let token = localStorage.getItem('kds_token');
-      if (!token) {
-        token = prompt('Ingrese la contrasena del sistema:');
-        if (token) localStorage.setItem('kds_token', token);
+    let TOKEN = '';
+
+    function getStoredToken() {
+      const token = localStorage.getItem('kds_token');
+      const expiry = localStorage.getItem('kds_token_expiry');
+      if (token && expiry && Date.now() < parseInt(expiry)) {
+        return token;
       }
-      return token || '';
+      if (token && !expiry) {
+        // Token sin expiración (sesión antigua) - limpiar
+        localStorage.removeItem('kds_token');
+      }
+      return null;
+    }
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById('authPin');
+      const slash = document.getElementById('eyeSlash');
+      if (input.type === 'password') {
+        input.type = 'text';
+        slash.style.display = 'none';
+      } else {
+        input.type = 'password';
+        slash.style.display = '';
+      }
+    }
+
+    function showAuthModal() {
+      document.getElementById('authOverlay').classList.remove('hidden');
+      const pin = document.getElementById('authPin');
+      pin.value = '';
+      pin.type = 'password';
+      document.getElementById('eyeSlash').style.display = '';
+      document.getElementById('authError').textContent = '';
+      pin.focus();
+    }
+
+    function hideAuthModal() {
+      document.getElementById('authOverlay').classList.add('hidden');
+    }
+
+    async function autenticarModal() {
+      const pin = document.getElementById('authPin').value.trim();
+      const remember = document.getElementById('authRemember').checked;
+      const errorEl = document.getElementById('authError');
+      const btn = document.getElementById('authBtn');
+
+      if (!pin) {
+        errorEl.textContent = 'Ingrese la contrase\u00f1a';
+        document.getElementById('authPin').classList.add('auth-error-input');
+        setTimeout(() => document.getElementById('authPin').classList.remove('auth-error-input'), 400);
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Verificando...';
+      errorEl.textContent = '';
+
+      try {
+        const res = await fetch(API_URL + '?action=getBebidas&token=' + encodeURIComponent(pin) + '&_=' + Date.now());
+        const result = await res.json();
+
+        if (!result.success) {
+          errorEl.textContent = 'Contrase\u00f1a incorrecta';
+          document.getElementById('authPin').classList.add('auth-error-input');
+          setTimeout(() => document.getElementById('authPin').classList.remove('auth-error-input'), 400);
+          document.getElementById('authPin').value = '';
+          document.getElementById('authPin').focus();
+          return;
+        }
+
+        // Token válido
+        TOKEN = pin;
+        localStorage.setItem('kds_token', pin);
+        if (remember) {
+          localStorage.setItem('kds_token_expiry', (Date.now() + 7 * 24 * 60 * 60 * 1000).toString());
+        } else {
+          localStorage.setItem('kds_token_expiry', (Date.now() + 12 * 60 * 60 * 1000).toString());
+        }
+        hideAuthModal();
+        inicializarApp();
+      } catch (e) {
+        errorEl.textContent = 'Error de conexi\u00f3n. Intente de nuevo.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Ingresar';
+      }
     }
 
     function handleAuthError(result) {
-      if (result && !result.success && result.error === 'Token invalido') {
+      if (result && !result.success && (result.error === 'Token inv\u00e1lido' || result.error === 'Token invalido')) {
         localStorage.removeItem('kds_token');
-        showToast('Contrasena incorrecta. Recargando...', 'error');
-        setTimeout(() => location.reload(), 1500);
+        localStorage.removeItem('kds_token_expiry');
+        showToast('Sesi\u00f3n inv\u00e1lida. Ingrese nuevamente.', 'error');
+        setTimeout(() => showAuthModal(), 1000);
         return true;
       }
       return false;
     }
 
-    const TOKEN = getToken();
+    function logout() {
+      localStorage.removeItem('kds_token');
+      localStorage.removeItem('kds_token_expiry');
+      TOKEN = '';
+      showAuthModal();
+    }
+
+    // Enter key en auth modal
+    document.getElementById('authPin').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') autenticarModal();
+    });
 
     // ==========================================
     // ESTADO
@@ -615,9 +981,21 @@
     // ==========================================
     // INICIALIZACION
     // ==========================================
-    cargarBebidas();
-    generarTicket();
-    actualizarLista();
+    function inicializarApp() {
+      cargarBebidas();
+      generarTicket();
+      actualizarLista();
+    }
+
+    // Check stored token on load
+    const storedToken = getStoredToken();
+    if (storedToken) {
+      TOKEN = storedToken;
+      hideAuthModal();
+      inicializarApp();
+    } else {
+      showAuthModal();
+    }
 
     // ==========================================
     // FUNCIONES
@@ -633,39 +1011,22 @@
           throw new Error(result.error);
         }
 
-        const select = document.getElementById('bebida');
-        select.innerHTML = '<option value="">-- Seleccionar Bebida --</option>';
+        populateSelectFromData(result.data);
 
-        // Agrupar por categoria
-        const categorias = {};
-        const ordenCategorias = [];
-        result.data.forEach(bebida => {
-          const cat = String(bebida.categoria || 'OTROS').trim().toUpperCase();
-          if (!categorias[cat]) {
-            categorias[cat] = [];
-            ordenCategorias.push(cat);
-          }
-          categorias[cat].push(bebida);
-        });
-
-        const prioridad = { 'BEBIDAS': 0, 'COCTELES': 1, 'SHOTS': 2 };
-        ordenCategorias.sort((a, b) => (prioridad[a] ?? 99) - (prioridad[b] ?? 99));
-
-        ordenCategorias.forEach(cat => {
-          const group = document.createElement('optgroup');
-          group.label = cat;
-          categorias[cat].forEach(bebida => {
-            const option = document.createElement('option');
-            option.value = bebida.nombre;
-            option.textContent = bebida.nombre + ' \u2014 \u20A1' + Number(bebida.precio).toLocaleString();
-            option.dataset.precio = bebida.precio;
-            group.appendChild(option);
-          });
-          select.appendChild(group);
-        });
+        // Cache for offline
+        localStorage.setItem('kds_bebidas_cache', JSON.stringify(result.data));
 
       } catch (error) {
         console.error('Error cargando bebidas:', error);
+        // Try loading from cache
+        const cached = localStorage.getItem('kds_bebidas_cache');
+        if (cached) {
+          try {
+            populateSelectFromData(JSON.parse(cached));
+            showToast('Usando catalogo guardado (sin conexion)', 'warning');
+            return;
+          } catch (e) { /* invalid cache */ }
+        }
         document.getElementById('bebida').innerHTML = '<option value="">Error al cargar bebidas</option>';
       }
     }
@@ -698,9 +1059,10 @@
       actualizarLista();
 
       document.getElementById('bebida').value = '';
+      document.getElementById('bebidaSearch').value = '';
       document.getElementById('cantidad').value = '1';
       document.getElementById('detalles').value = '';
-      document.getElementById('bebida').focus();
+      document.getElementById('bebidaSearch').focus();
     }
 
     function eliminar(index) {
@@ -810,12 +1172,182 @@
 
       } catch (error) {
         console.error('Error:', error);
-        showToast('Error: ' + error.message, 'error');
+        // If network error, queue for offline
+        if (!navigator.onLine || error.message === 'Failed to fetch' || error.name === 'TypeError') {
+          const queue = JSON.parse(localStorage.getItem('kds_offline_queue') || '[]');
+          queue.push({ payload, timestamp: Date.now() });
+          localStorage.setItem('kds_offline_queue', JSON.stringify(queue));
+          showToast('Sin conexion: orden guardada localmente (' + queue.length + ' pendiente' + (queue.length > 1 ? 's' : '') + ')', 'warning');
+          bebidas = [];
+          actualizarLista();
+          document.getElementById('cliente').value = '';
+          generarTicket();
+        } else {
+          showToast('Error: ' + error.message, 'error');
+        }
 
       } finally {
         btnEnviar.disabled = false;
         btnEnviar.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Enviar Orden Completa';
         document.body.classList.remove('loading-state');
+      }
+    }
+
+    // ==========================================
+    // BUSQUEDA RAPIDA DE BEBIDAS
+    // ==========================================
+    let allBebidas = [];
+
+    document.getElementById('bebidaSearch').addEventListener('input', function() {
+      const query = this.value.toLowerCase().trim();
+      const results = document.getElementById('searchResults');
+
+      if (query.length < 1) {
+        results.style.display = 'none';
+        return;
+      }
+
+      const matches = allBebidas.filter(b =>
+        b.nombre.toLowerCase().includes(query) ||
+        (b.categoria || '').toLowerCase().includes(query)
+      ).slice(0, 10);
+
+      if (matches.length === 0) {
+        results.innerHTML = '<div class="search-empty">Sin resultados</div>';
+      } else {
+        results.innerHTML = matches.map(b =>
+          '<div class="search-item" data-nombre="' + escapeHtml(b.nombre) + '" data-precio="' + b.precio + '">' +
+          '<span class="search-name">' + escapeHtml(b.nombre) + '</span>' +
+          '<span class="search-price">\u20A1' + Number(b.precio).toLocaleString() + '</span>' +
+          '<span class="search-cat">' + escapeHtml(b.categoria || '') + '</span>' +
+          '</div>'
+        ).join('');
+      }
+      results.style.display = 'block';
+    });
+
+    document.getElementById('searchResults').addEventListener('click', function(e) {
+      const item = e.target.closest('.search-item');
+      if (!item) return;
+      const nombre = item.dataset.nombre;
+      const select = document.getElementById('bebida');
+      // Try to select matching option
+      for (let i = 0; i < select.options.length; i++) {
+        if (select.options[i].value === nombre) {
+          select.selectedIndex = i;
+          break;
+        }
+      }
+      document.getElementById('bebidaSearch').value = nombre;
+      document.getElementById('searchResults').style.display = 'none';
+      document.getElementById('cantidad').focus();
+    });
+
+    // Close search on click outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.search-container')) {
+        document.getElementById('searchResults').style.display = 'none';
+      }
+    });
+
+    // Close search on Escape
+    document.getElementById('bebidaSearch').addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.getElementById('searchResults').style.display = 'none';
+        this.blur();
+      }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const firstItem = document.querySelector('.search-item');
+        if (firstItem) firstItem.click();
+      }
+    });
+
+    // ==========================================
+    // MODO OFFLINE
+    // ==========================================
+    function updateConnectionStatus(online) {
+      const el = document.getElementById('connectionStatus');
+      if (online) {
+        el.className = 'connection-status';
+        el.querySelector('.status-text').textContent = 'Conectado';
+      } else {
+        el.className = 'connection-status offline';
+        el.querySelector('.status-text').textContent = 'Sin conexion';
+      }
+    }
+
+    window.addEventListener('online', function() {
+      updateConnectionStatus(true);
+      showToast('Conexion restaurada', 'success');
+      sincronizarColaOffline();
+    });
+
+    window.addEventListener('offline', function() {
+      updateConnectionStatus(false);
+      showToast('Sin conexion a internet', 'warning');
+    });
+
+    // Initialize status
+    updateConnectionStatus(navigator.onLine);
+
+    function populateSelectFromData(data) {
+      allBebidas = data;
+      const select = document.getElementById('bebida');
+      select.innerHTML = '<option value="">-- Seleccionar Bebida --</option>';
+
+      const categorias = {};
+      const ordenCategorias = [];
+      data.forEach(bebida => {
+        const cat = String(bebida.categoria || 'OTROS').trim().toUpperCase();
+        if (!categorias[cat]) {
+          categorias[cat] = [];
+          ordenCategorias.push(cat);
+        }
+        categorias[cat].push(bebida);
+      });
+
+      const prioridad = { 'BEBIDAS': 0, 'COCTELES': 1, 'SHOTS': 2 };
+      ordenCategorias.sort((a, b) => (prioridad[a] ?? 99) - (prioridad[b] ?? 99));
+
+      ordenCategorias.forEach(cat => {
+        const group = document.createElement('optgroup');
+        group.label = cat;
+        categorias[cat].forEach(bebida => {
+          const option = document.createElement('option');
+          option.value = bebida.nombre;
+          option.textContent = bebida.nombre + ' \u2014 \u20A1' + Number(bebida.precio).toLocaleString();
+          option.dataset.precio = bebida.precio;
+          group.appendChild(option);
+        });
+        select.appendChild(group);
+      });
+    }
+
+    async function sincronizarColaOffline() {
+      const queue = JSON.parse(localStorage.getItem('kds_offline_queue') || '[]');
+      if (queue.length === 0) return;
+
+      showToast('Sincronizando ' + queue.length + ' orden(es) pendiente(s)...', 'warning');
+
+      const failed = [];
+      for (const item of queue) {
+        try {
+          const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(item.payload) });
+          const result = await response.json();
+          if (!result.success) failed.push(item);
+        } catch (e) {
+          failed.push(item);
+          break; // Stop trying if still offline
+        }
+      }
+
+      if (failed.length > 0) {
+        localStorage.setItem('kds_offline_queue', JSON.stringify(failed));
+        showToast(failed.length + ' orden(es) no se pudieron enviar', 'error');
+      } else {
+        localStorage.removeItem('kds_offline_queue');
+        showToast('Todas las ordenes sincronizadas', 'success');
       }
     }
 
