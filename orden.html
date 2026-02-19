@@ -539,18 +539,28 @@
           throw new Error(result.error);
         }
 
+        console.log('📦 Datos recibidos:', JSON.stringify(result.data.slice(0, 3)));
+
         const select = document.getElementById('bebida');
         select.innerHTML = '<option value="">-- Seleccionar Bebida --</option>';
 
-        // Agrupar por categoría
+        // Agrupar por categoría (normalizar a mayúsculas y sin espacios extra)
         const categorias = {};
+        const ordenCategorias = [];
         result.data.forEach(bebida => {
-          if (!categorias[bebida.categoria]) categorias[bebida.categoria] = [];
-          categorias[bebida.categoria].push(bebida);
+          const cat = String(bebida.categoria || 'OTROS').trim().toUpperCase();
+          if (!categorias[cat]) {
+            categorias[cat] = [];
+            ordenCategorias.push(cat);
+          }
+          categorias[cat].push(bebida);
         });
 
-        ['BEBIDAS', 'COCTELES', 'SHOTS'].forEach(cat => {
-          if (!categorias[cat]) return;
+        // Ordenar: BEBIDAS primero, COCTELES segundo, SHOTS tercero, resto al final
+        const prioridad = { 'BEBIDAS': 0, 'COCTELES': 1, 'SHOTS': 2 };
+        ordenCategorias.sort((a, b) => (prioridad[a] ?? 99) - (prioridad[b] ?? 99));
+
+        ordenCategorias.forEach(cat => {
           const group = document.createElement('optgroup');
           group.label = cat;
           categorias[cat].forEach(bebida => {
