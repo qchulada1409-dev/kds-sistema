@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <title>Órdenes Pendientes — Q'Chulada</title>
+  <title>Ordenes Pendientes — Q'Chulada</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -178,6 +178,14 @@
       transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       font-family: 'DM Sans', sans-serif;
       letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .notif-banner svg {
+      width: 22px;
+      height: 22px;
     }
 
     .notif-banner.show {
@@ -196,14 +204,8 @@
     }
 
     @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .orden-header {
@@ -256,6 +258,15 @@
       color: var(--bark-light);
       margin-top: 8px;
       font-style: italic;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .bebida-detalles svg {
+      width: 15px;
+      height: 15px;
+      opacity: 0.5;
     }
 
     .btn-completar {
@@ -273,6 +284,15 @@
       box-shadow: 0 5px 16px rgba(30, 132, 73, 0.25);
       transition: all 0.2s;
       letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-completar svg {
+      width: 22px;
+      height: 22px;
     }
 
     .btn-completar:active {
@@ -286,9 +306,12 @@
       color: var(--bark-light);
     }
 
-    .empty-icon {
-      font-size: 72px;
+    .empty-state svg {
+      width: 72px;
+      height: 72px;
       margin-bottom: 16px;
+      opacity: 0.3;
+      stroke: var(--bark-light);
     }
 
     .loading {
@@ -353,15 +376,17 @@
 
   <!-- Notification overlays -->
   <div class="notif-flash" id="notifFlash"></div>
-  <div class="notif-banner" id="notifBanner">Nueva orden recibida</div>
+  <div class="notif-banner" id="notifBanner">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    Nueva orden recibida
+  </div>
 
-  <!-- Audio element properly inside body -->
   <audio id="alertSound" preload="auto"></audio>
 
   <div class="main-wrap">
     <div class="header">
       <div class="brand">Q'Chulada</div>
-      <h1>Órdenes Pendientes</h1>
+      <h1>Ordenes Pendientes</h1>
       <p id="timestamp">Iniciando...</p>
     </div>
 
@@ -382,27 +407,35 @@
         .replace(/'/g, '&#039;');
     }
 
+    // SVG icon constants
+    const ICON = {
+      note: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:15px;height:15px;opacity:.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+      check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+      allDone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+      history: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M18 9l-5 5-2-2-4 4"/></svg>'
+    };
+
     // ==========================================
-    // CONFIGURACIÓN - IMPORTANTE: Cambiar esta URL
+    // CONFIGURACION
     // ==========================================
     const API_URL = 'https://script.google.com/macros/s/AKfycbwhNRuVuu0Pa7fJ6TXfk7QD61hRfH9zjbPaSFZachmmYc608yAjGerq86iL25q_XzkG/exec';
 
     // ==========================================
-    // AUTENTICACIÓN
+    // AUTENTICACION
     // ==========================================
     function getToken() {
       let token = localStorage.getItem('kds_token');
       if (!token) {
-        token = prompt('Ingrese la contraseña del sistema:');
+        token = prompt('Ingrese la contrasena del sistema:');
         if (token) localStorage.setItem('kds_token', token);
       }
       return token || '';
     }
 
     function handleAuthError(result) {
-      if (result && !result.success && result.error === 'Token inválido') {
+      if (result && !result.success && result.error === 'Token invalido') {
         localStorage.removeItem('kds_token');
-        alert('Contraseña incorrecta. La página se recargará.');
+        alert('Contrasena incorrecta. La pagina se recargara.');
         location.reload();
         return true;
       }
@@ -420,39 +453,24 @@
     // ==========================================
 
     function inicializarAudio() {
-      // Crear contexto de audio
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-      // Intentar cargar sonido embebido
       alertSound = document.getElementById('alertSound');
-
-      // Si no hay sonido embebido, usar Web Audio API para generar tono
-      if (!alertSound.src) {
-        console.log('📢 Usando tono generado por Web Audio API');
-      }
     }
 
     function reproducirAlerta() {
-      console.log('🔔 Reproduciendo alerta...');
-
-      // Visual notification
       const flash = document.getElementById('notifFlash');
       const banner = document.getElementById('notifBanner');
       flash.classList.remove('active');
       banner.classList.remove('show');
-      void flash.offsetWidth; // force reflow
+      void flash.offsetWidth;
       flash.classList.add('active');
       banner.classList.add('show');
-      setTimeout(() => {
-        banner.classList.remove('show');
-      }, 3000);
+      setTimeout(() => { banner.classList.remove('show'); }, 3000);
 
       try {
-        // Opción 1: Usar sonido embebido (si existe)
         if (alertSound && alertSound.src) {
-          alertSound.play().catch(e => console.log('Error reproduciendo audio:', e));
+          alertSound.play().catch(() => {});
         } else {
-          // Opción 2: Generar tono con Web Audio API
           generarTonoAlerta();
         }
       } catch (error) {
@@ -461,50 +479,31 @@
     }
 
     function generarTonoAlerta() {
-      if (!audioContext) {
-        inicializarAudio();
-      }
+      if (!audioContext) inicializarAudio();
+      if (audioContext.state === 'suspended') audioContext.resume();
 
-      // Resume context if suspended (browser autoplay policy)
-      if (audioContext.state === 'suspended') {
-        audioContext.resume();
-      }
-
-      // Crear oscilador (genera el tono)
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
-
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
-
-      // Configurar tono
-      oscillator.frequency.value = 800; // Frecuencia en Hz (tono agudo)
-      oscillator.type = 'sine'; // Tipo de onda
-
-      // Envelope (volumen que sube y baja)
+      oscillator.frequency.value = 800;
+      oscillator.type = 'sine';
       gainNode.gain.setValueAtTime(0, audioContext.currentTime);
       gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
       gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-
-      // Reproducir
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.5);
 
-      // Segundo tono (doble beep)
       setTimeout(() => {
         const osc2 = audioContext.createOscillator();
         const gain2 = audioContext.createGain();
-
         osc2.connect(gain2);
         gain2.connect(audioContext.destination);
-
         osc2.frequency.value = 1000;
         osc2.type = 'sine';
-
         gain2.gain.setValueAtTime(0, audioContext.currentTime);
         gain2.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
         gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-
         osc2.start(audioContext.currentTime);
         osc2.stop(audioContext.currentTime + 0.5);
       }, 200);
@@ -515,33 +514,26 @@
     // ==========================================
 
     async function cargarOrdenes() {
-      console.log('🔄 Cargando órdenes...');
-
       const container = document.getElementById('ordenes');
 
-      // No mostrar loading si ya hay órdenes (para no interrumpir vista)
       if (ordenesActuales.length === 0) {
         container.innerHTML = `
           <div class="loading">
             <div class="spinner"></div>
-            <p style="font-size: 18px; color: #666;">Cargando órdenes...</p>
+            <p style="font-size: 18px; color: #666;">Cargando ordenes...</p>
           </div>
         `;
       }
 
       try {
         const url = API_URL + '?action=getOrdenes&token=' + encodeURIComponent(TOKEN) + '&_=' + Date.now();
-        console.log('📡 Fetching:', url);
-
         const response = await fetch(url);
-        console.log('📥 Status:', response.status);
 
         if (!response.ok) {
           throw new Error('Error HTTP: ' + response.status);
         }
 
         const result = await response.json();
-        console.log('📦 Result:', result);
 
         if (handleAuthError(result)) return;
         if (!result.success) {
@@ -549,11 +541,8 @@
         }
 
         const ordenesNuevas = result.data;
-        console.log('✅ Órdenes recibidas:', ordenesNuevas.length);
 
-        // DETECTAR NUEVAS ÓRDENES
         if (ordenesActuales.length > 0 && ordenesNuevas.length > ordenesActuales.length) {
-          console.log('🆕 Nueva orden detectada!');
           reproducirAlerta();
         }
 
@@ -569,14 +558,13 @@
           });
 
       } catch (error) {
-        console.error('❌ Error:', error);
-
+        console.error('Error:', error);
         container.innerHTML = `
           <div class="error-state">
-            <h3>Error al Cargar Órdenes</h3>
+            <h3>Error al Cargar Ordenes</h3>
             <p style="font-size: 16px; margin-top: 10px;">${escapeHtml(error.message)}</p>
             <p style="font-size: 14px; margin-top: 10px; opacity: 0.7;">
-              Verifica que la API esté configurada correctamente
+              Verifica que la API este configurada correctamente
             </p>
             <button class="btn-retry" onclick="cargarOrdenes()">
               Reintentar
@@ -587,20 +575,18 @@
     }
 
     function mostrarOrdenes(ordenes) {
-      console.log('📋 Mostrando', ordenes.length, 'órdenes');
-
       const container = document.getElementById('ordenes');
 
       if (!ordenes || ordenes.length === 0) {
         container.innerHTML = `
           <div class="empty-state">
-            <div class="empty-icon">✅</div>
+            ${ICON.allDone}
             <p style="font-size: 28px; font-weight: bold; margin-bottom: 10px;">
-              No hay órdenes pendientes
+              No hay ordenes pendientes
             </p>
-            <p style="font-size: 18px;">¡Todo al día!</p>
-            <button class="btn-retry" onclick="window.location.href='historial.html'" style="margin-top:20px;">
-              📜 Ver Historial
+            <p style="font-size: 18px;">Todo al dia</p>
+            <button class="btn-retry" onclick="window.location.href='historial.html'" style="margin-top:20px;display:inline-flex;align-items:center;gap:8px;">
+              ${ICON.history} Ver Dashboard
             </button>
           </div>
         `;
@@ -623,56 +609,44 @@
                 <span class="bebida-nombre">${escapeHtml(item.bebida)}</span>
               </div>
               ${item.detalles ?
-                `<div class="bebida-detalles">📝 ${escapeHtml(item.detalles)}</div>`
+                `<div class="bebida-detalles">${ICON.note} ${escapeHtml(item.detalles)}</div>`
                 : ''}
             </div>
           `).join('')}
 
           <button class="btn-completar" data-id="${orden.id}" data-ticket="${escapeHtml(orden.ticket)}">
-            ✓ Marcar como Completada
+            ${ICON.check} Marcar como Completada
           </button>
         </div>
       `).join('');
     }
 
     async function completarOrden(id, ticket) {
-      console.log('✓ Completando orden:', id, ticket);
-
-      if (!confirm(`¿Marcar orden ${ticket} como completada?`)) {
+      if (!confirm('Marcar orden ' + ticket + ' como completada?')) {
         return;
       }
 
       try {
         const url = API_URL + '?action=completarOrden&ordenID=' + id + '&token=' + encodeURIComponent(TOKEN);
-        console.log('📡 Completando:', url);
-
         const response = await fetch(url);
         const result = await response.json();
-
-        console.log('📦 Result:', result);
 
         if (handleAuthError(result)) return;
         if (!result.success) {
           throw new Error(result.error);
         }
 
-        console.log('✅ Orden completada');
-
-        // Recargar órdenes inmediatamente
         cargarOrdenes();
 
       } catch (error) {
-        console.error('❌ Error:', error);
+        console.error('Error:', error);
         alert('Error al completar orden: ' + error.message);
       }
     }
 
     // ==========================================
-    // INICIALIZACIÓN
+    // INICIALIZACION
     // ==========================================
-
-    console.log('🚀 Iniciando Display KDS');
-    console.log('API URL:', API_URL);
 
     // Event delegation para botones de completar orden
     document.getElementById('ordenes').addEventListener('click', function(e) {
@@ -683,23 +657,15 @@
       completarOrden(id, ticket);
     });
 
-    // Inicializar audio al primer click (requerido por navegadores)
+    // Inicializar audio al primer click
     document.addEventListener('click', function iniciarAudio() {
-      if (!audioContext) {
-        inicializarAudio();
-        console.log('🔊 Audio inicializado');
-      }
+      if (!audioContext) inicializarAudio();
       document.removeEventListener('click', iniciarAudio);
     }, { once: true });
 
-    // Cargar órdenes al inicio
     cargarOrdenes();
-
-    // Auto-refresh cada 10 segundos
-    console.log('⏰ Auto-refresh configurado (10 segundos)');
     setInterval(cargarOrdenes, 10000);
 
-    // Prevenir zoom en mobile
     document.addEventListener('gesturestart', function(e) {
       e.preventDefault();
     });

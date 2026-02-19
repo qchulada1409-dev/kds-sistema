@@ -87,6 +87,70 @@
       );
     }
 
+    /* ===== TOAST NOTIFICATION SYSTEM ===== */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+      width: 90%;
+      max-width: 440px;
+    }
+
+    .toast {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      animation: toastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      backdrop-filter: blur(8px);
+    }
+
+    .toast.removing {
+      animation: toastOut 0.3s ease forwards;
+    }
+
+    .toast-success {
+      background: linear-gradient(135deg, var(--forest), var(--forest-deep));
+      color: white;
+    }
+
+    .toast-error {
+      background: linear-gradient(135deg, var(--chile), var(--chile-deep));
+      color: white;
+    }
+
+    .toast-warning {
+      background: linear-gradient(135deg, var(--marigold), var(--terracotta));
+      color: white;
+    }
+
+    .toast svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes toastOut {
+      to { opacity: 0; transform: translateY(-10px) scale(0.95); }
+    }
+
     .container {
       max-width: 800px;
       margin: 0 auto;
@@ -263,6 +327,21 @@
       font-size: 14px;
     }
 
+    .bebida-detalles {
+      font-size: 14px;
+      color: #666;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .bebida-detalles svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0.6;
+    }
+
     .section-title {
       margin-bottom: 14px;
       color: var(--bark);
@@ -294,6 +373,15 @@
       margin-top: 10px;
       transition: all 0.2s;
       letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn svg {
+      width: 18px;
+      height: 18px;
     }
 
     .btn-add {
@@ -309,6 +397,11 @@
       padding: 18px;
       box-shadow: 0 6px 20px rgba(192, 57, 43, 0.25);
       letter-spacing: 0.5px;
+    }
+
+    .btn-submit svg {
+      width: 20px;
+      height: 20px;
     }
 
     .btn:active {
@@ -330,6 +423,13 @@
       cursor: pointer;
       font-weight: 700;
       transition: background 0.2s;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-remove svg {
+      width: 16px;
+      height: 16px;
     }
 
     .btn-remove:active {
@@ -343,46 +443,26 @@
       font-size: 15px;
     }
 
-    .mensaje {
-      padding: 16px;
-      border-radius: 10px;
-      margin-top: 18px;
-      text-align: center;
-      display: none;
-      font-weight: 600;
-      animation: slideIn 0.3s ease;
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .exito {
-      background: #D5F5E3;
-      color: var(--forest-deep);
-      border: 2px solid rgba(30, 132, 73, 0.3);
-    }
-
-    .error {
-      background: #FADBD8;
-      color: var(--chile-deep);
-      border: 2px solid rgba(192, 57, 43, 0.3);
-    }
-
     .empty-state {
       text-align: center;
       padding: 36px 20px;
       color: #B0A090;
     }
 
-    .empty-state p:first-child {
+    .empty-state svg {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 10px;
+      opacity: 0.4;
+    }
+
+    .empty-state p:first-of-type {
       font-size: 16px;
       font-weight: 600;
       color: var(--bark-light);
     }
 
-    .loading {
+    .loading-state {
       opacity: 0.5;
       pointer-events: none;
     }
@@ -396,6 +476,7 @@
 </head>
 <body>
   <div class="papel-picado"></div>
+  <div class="toast-container" id="toastContainer"></div>
 
   <div class="container">
     <div class="header">
@@ -411,11 +492,12 @@
 
       <div class="input-group">
         <label>Nombre Cliente:</label>
-        <input type="text" id="cliente" placeholder="Ej: Juan Pérez">
+        <input type="text" id="cliente" placeholder="Ej: Juan Perez">
       </div>
 
       <button class="btn btn-historial" onclick="window.location.href='historial.html'">
-        Ver Historial
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 9l-5 5-2-2-4 4"/></svg>
+        Dashboard
       </button>
     </div>
 
@@ -439,10 +521,11 @@
 
       <div class="input-group">
         <label>Detalles (opcional):</label>
-        <input type="text" id="detalles" placeholder="Ej: Sin hielo, 2xAzulito 2xMargarita">
+        <input type="text" id="detalles" placeholder="Ej: Sin hielo, extra limón">
       </div>
 
       <button class="btn btn-add" onclick="agregarBebida()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Agregar Bebida
       </button>
     </div>
@@ -453,10 +536,9 @@
     </div>
 
     <button class="btn btn-submit" id="btnEnviar" onclick="enviarOrden()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       Enviar Orden Completa
     </button>
-
-    <div class="mensaje" id="mensaje"></div>
   </div>
 
   <script>
@@ -474,27 +556,50 @@
     }
 
     // ==========================================
-    // CONFIGURACIÓN - IMPORTANTE: Cambiar esta URL
+    // TOAST SYSTEM
+    // ==========================================
+    function showToast(message, type = 'success', duration = 3500) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast toast-' + type;
+
+      const icons = {
+        success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+        error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+        warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+      };
+
+      toast.innerHTML = (icons[type] || icons.success) + '<span>' + escapeHtml(message) + '</span>';
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add('removing');
+        toast.addEventListener('animationend', () => toast.remove());
+      }, duration);
+    }
+
+    // ==========================================
+    // CONFIGURACION
     // ==========================================
     const API_URL = 'https://script.google.com/macros/s/AKfycbwhNRuVuu0Pa7fJ6TXfk7QD61hRfH9zjbPaSFZachmmYc608yAjGerq86iL25q_XzkG/exec';
 
     // ==========================================
-    // AUTENTICACIÓN
+    // AUTENTICACION
     // ==========================================
     function getToken() {
       let token = localStorage.getItem('kds_token');
       if (!token) {
-        token = prompt('Ingrese la contraseña del sistema:');
+        token = prompt('Ingrese la contrasena del sistema:');
         if (token) localStorage.setItem('kds_token', token);
       }
       return token || '';
     }
 
     function handleAuthError(result) {
-      if (result && !result.success && result.error === 'Token inválido') {
+      if (result && !result.success && result.error === 'Token invalido') {
         localStorage.removeItem('kds_token');
-        alert('Contraseña incorrecta. La página se recargará.');
-        location.reload();
+        showToast('Contrasena incorrecta. Recargando...', 'error');
+        setTimeout(() => location.reload(), 1500);
         return true;
       }
       return false;
@@ -508,19 +613,10 @@
     let bebidas = [];
 
     // ==========================================
-    // INICIALIZACIÓN
+    // INICIALIZACION
     // ==========================================
-
-    console.log('🚀 Iniciando Nueva Orden KDS');
-    console.log('API URL:', API_URL);
-
-    // Cargar catálogo de bebidas
     cargarBebidas();
-
-    // Generar ticket automático
     generarTicket();
-
-    // Inicializar lista
     actualizarLista();
 
     // ==========================================
@@ -528,8 +624,6 @@
     // ==========================================
 
     async function cargarBebidas() {
-      console.log('📋 Cargando catálogo de bebidas...');
-
       try {
         const response = await fetch(API_URL + '?action=getBebidas&token=' + encodeURIComponent(TOKEN) + '&_=' + Date.now());
         const result = await response.json();
@@ -539,12 +633,10 @@
           throw new Error(result.error);
         }
 
-        console.log('📦 Datos recibidos:', JSON.stringify(result.data.slice(0, 3)));
-
         const select = document.getElementById('bebida');
         select.innerHTML = '<option value="">-- Seleccionar Bebida --</option>';
 
-        // Agrupar por categoría (normalizar a mayúsculas y sin espacios extra)
+        // Agrupar por categoria
         const categorias = {};
         const ordenCategorias = [];
         result.data.forEach(bebida => {
@@ -556,7 +648,6 @@
           categorias[cat].push(bebida);
         });
 
-        // Ordenar: BEBIDAS primero, COCTELES segundo, SHOTS tercero, resto al final
         const prioridad = { 'BEBIDAS': 0, 'COCTELES': 1, 'SHOTS': 2 };
         ordenCategorias.sort((a, b) => (prioridad[a] ?? 99) - (prioridad[b] ?? 99));
 
@@ -566,19 +657,16 @@
           categorias[cat].forEach(bebida => {
             const option = document.createElement('option');
             option.value = bebida.nombre;
-            option.textContent = bebida.nombre + ' — ₡' + Number(bebida.precio).toLocaleString();
+            option.textContent = bebida.nombre + ' \u2014 \u20A1' + Number(bebida.precio).toLocaleString();
             option.dataset.precio = bebida.precio;
             group.appendChild(option);
           });
           select.appendChild(group);
         });
 
-        console.log('✅ Bebidas cargadas:', result.data.length);
-
       } catch (error) {
-        console.error('❌ Error cargando bebidas:', error);
-        const select = document.getElementById('bebida');
-        select.innerHTML = '<option value="">Error al cargar bebidas</option>';
+        console.error('Error cargando bebidas:', error);
+        document.getElementById('bebida').innerHTML = '<option value="">Error al cargar bebidas</option>';
       }
     }
 
@@ -597,32 +685,25 @@
       const precio = Number(selectEl.selectedOptions[0]?.dataset.precio || 0);
 
       if (!nombre) {
-        alert('❌ Selecciona una bebida');
+        showToast('Selecciona una bebida', 'warning');
         return;
       }
 
       if (cantidad < 1 || cantidad > 99) {
-        alert('❌ Cantidad debe ser entre 1 y 99');
+        showToast('Cantidad debe ser entre 1 y 99', 'warning');
         return;
       }
 
       bebidas.push({ nombre, cantidad, detalles, precio });
-
-      console.log('➕ Bebida agregada:', { nombre, cantidad, detalles });
-
       actualizarLista();
 
-      // Limpiar campos
       document.getElementById('bebida').value = '';
       document.getElementById('cantidad').value = '1';
       document.getElementById('detalles').value = '';
-
-      // Focus en bebida
       document.getElementById('bebida').focus();
     }
 
     function eliminar(index) {
-      console.log('🗑️ Eliminando bebida:', index);
       bebidas.splice(index, 1);
       actualizarLista();
     }
@@ -636,6 +717,7 @@
       if (bebidas.length === 0) {
         lista.innerHTML = `
           <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>
             <p>No hay bebidas agregadas</p>
             <p style="font-size: 14px; margin-top: 8px;">
               Usa el formulario arriba para agregar bebidas
@@ -655,19 +737,19 @@
               ${escapeHtml(b.nombre)}
             </div>
             <div style="font-size:13px;color:var(--forest);font-weight:600;margin-top:2px;">
-              ₡${(b.precio * b.cantidad).toLocaleString()}
+              \u20A1${(b.precio * b.cantidad).toLocaleString()}
             </div>
             ${b.detalles ?
-              `<div style="font-size:14px;color:#666;margin-top:5px;">📝 ${escapeHtml(b.detalles)}</div>`
+              `<div class="bebida-detalles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> ${escapeHtml(b.detalles)}</div>`
               : ''}
           </div>
           <button class="btn-remove" onclick="eliminar(${i})">
-            ✕
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
       `).join('') + `
         <div style="text-align:right;padding:12px 16px;font-weight:700;font-size:18px;color:var(--bark);border-top:2px solid var(--clay);margin-top:4px;">
-          Total: ₡${total.toLocaleString()}
+          Total: \u20A1${total.toLocaleString()}
         </div>
       `;
     }
@@ -677,43 +759,34 @@
       const cliente = document.getElementById('cliente').value.trim();
 
       if (!ticket) {
-        alert('❌ Ingresa el número de ticket');
+        showToast('Ingresa el numero de ticket', 'warning');
         document.getElementById('ticket').focus();
         return;
       }
 
       if (!cliente) {
-        alert('❌ Ingresa el nombre del cliente');
+        showToast('Ingresa el nombre del cliente', 'warning');
         document.getElementById('cliente').focus();
         return;
       }
 
       if (bebidas.length === 0) {
-        alert('❌ Agrega al menos una bebida a la orden');
+        showToast('Agrega al menos una bebida a la orden', 'warning');
         return;
       }
 
-      console.log('📤 Enviando orden:', { ticket, cliente, bebidas });
-
-      // Deshabilitar botón
       const btnEnviar = document.getElementById('btnEnviar');
       btnEnviar.disabled = true;
-      btnEnviar.textContent = '⏳ Enviando...';
-      document.body.classList.add('loading');
+      btnEnviar.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Enviando...';
+      document.body.classList.add('loading-state');
 
       try {
-        const data = {
-          ticket: ticket,
-          cliente: cliente,
-          bebidas: bebidas
-        };
-
         const payload = {
           action: 'crearOrden',
           token: TOKEN,
-          ticket: data.ticket,
-          cliente: data.cliente,
-          bebidas: data.bebidas
+          ticket: ticket,
+          cliente: cliente,
+          bebidas: bebidas
         };
 
         const response = await fetch(API_URL, {
@@ -722,66 +795,43 @@
         });
         const result = await response.json();
 
-        console.log('📦 Result:', result);
-
         if (handleAuthError(result)) return;
         if (!result.success) {
           throw new Error(result.error);
         }
 
-        // Mostrar mensaje de éxito
-        const mensaje = document.getElementById('mensaje');
-        mensaje.textContent = '✅ ' + result.data.mensaje;
-        mensaje.className = 'mensaje exito';
-        mensaje.style.display = 'block';
+        showToast(result.data.mensaje, 'success');
 
-        console.log('✅ Orden creada exitosamente');
-
-        // Limpiar formulario
         bebidas = [];
         actualizarLista();
         document.getElementById('cliente').value = '';
         generarTicket();
-
-        // Ocultar mensaje después de 3 segundos
-        setTimeout(() => {
-          mensaje.style.display = 'none';
-        }, 3000);
-
-        // Focus en cliente para siguiente orden
         document.getElementById('cliente').focus();
 
       } catch (error) {
-        console.error('❌ Error:', error);
-
-        const mensaje = document.getElementById('mensaje');
-        mensaje.textContent = '❌ Error: ' + error.message;
-        mensaje.className = 'mensaje error';
-        mensaje.style.display = 'block';
+        console.error('Error:', error);
+        showToast('Error: ' + error.message, 'error');
 
       } finally {
-        // Re-habilitar botón
         btnEnviar.disabled = false;
-        btnEnviar.textContent = '🚀 Enviar Orden Completa';
-        document.body.classList.remove('loading');
+        btnEnviar.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Enviar Orden Completa';
+        document.body.classList.remove('loading-state');
       }
     }
 
     // Shortcuts de teclado
     document.addEventListener('keydown', function(e) {
-      // Enter en campos = agregar bebida
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
         if (e.key === 'Enter' && e.target.id !== 'cliente') {
           e.preventDefault();
           agregarBebida();
         }
       }
-
-      // Ctrl/Cmd + Enter = enviar orden
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         enviarOrden();
       }
     });
   </script>
+  <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 </body>
 </html>
