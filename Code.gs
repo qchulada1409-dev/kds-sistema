@@ -29,6 +29,13 @@ function doGet(e) {
       completarOrden(ordenID);
       return jsonResponse({ success: true });
     }
+
+    if (action === 'cancelarOrden') {
+      const ordenID = parseInt(e.parameter.ordenID);
+      const razon = e.parameter.razon || 'Sin motivo';
+      cancelarOrden(ordenID, razon);
+      return jsonResponse({ success: true });
+    }
     
     if (action === 'getHistorial') {
       const limite = e.parameter.limite ? parseInt(e.parameter.limite) : null;
@@ -55,6 +62,21 @@ function doPost(e) {
 
     if (payload.action === 'crearOrden') {
       const resultado = crearOrden(payload.ticket, payload.cliente, payload.bebidas);
+      return jsonResponse({ success: true, data: resultado });
+    }
+
+    if (payload.action === 'modificarOrden') {
+      const resultado = modificarOrden(
+        parseInt(payload.ordenID),
+        payload.cliente,
+        payload.bebidas,
+        payload.motivo || ''
+      );
+      return jsonResponse({ success: true, data: resultado });
+    }
+
+    if (payload.action === 'eliminarOrden') {
+      const resultado = eliminarOrden(parseInt(payload.ordenID));
       return jsonResponse({ success: true, data: resultado });
     }
 
@@ -98,28 +120,39 @@ function obtenerOrdenesPendientes() {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const ordenesSheet = ss.getSheetByName('Órdenes');
   const itemsSheet = ss.getSheetByName('Items');
-  
+  const bebidasSheet = ss.getSheetByName('Bebidas');
+
   const ordenes = ordenesSheet.getDataRange().getValues();
   const items = itemsSheet.getDataRange().getValues();
-  
+
+  // Crear lookup de precios
+  const precios = {};
+  if (bebidasSheet) {
+    const bebidasData = bebidasSheet.getDataRange().getValues();
+    for (let b = 1; b < bebidasData.length; b++) {
+      if (bebidasData[b][0]) precios[bebidasData[b][0]] = bebidasData[b][1];
+    }
+  }
+
   const resultado = [];
-  
+
   for (let i = 1; i < ordenes.length; i++) {
     if (ordenes[i][4] !== 'Pendiente') continue;
-    
+
     const ordenID = ordenes[i][0];
     const itemsOrden = [];
-    
+
     for (let j = 1; j < items.length; j++) {
       if (items[j][1] === ordenID) {
         itemsOrden.push({
           bebida: items[j][2],
           cantidad: items[j][3],
-          detalles: items[j][4] || ''
+          detalles: items[j][4] || '',
+          precio: precios[items[j][2]] || 0
         });
       }
     }
-    
+
     if (itemsOrden.length > 0) {
       resultado.push({
         id: ordenID,
@@ -146,6 +179,113 @@ function completarOrden(ordenID) {
       return;
     }
   }
+}
+
+function cancelarOrden(ordenID, razon) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const ordenesSheet = ss.getSheetByName('Órdenes');
+  const data = ordenesSheet.getDataRange().getValues();
+
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] === ordenID) {
+      if (data[i][4] !== 'Pendiente') {
+        throw new Error('Solo se pueden cancelar órdenes pendientes');
+      }
+      ordenesSheet.getRange(i + 1, 5).setValue('Cancelada');
+      ordenesSheet.getRange(i + 1, 6).setValue(new Date());
+      ordenesSheet.getRange(i + 1, 7).setValue(razon);
+      return;
+    }
+  }
+  throw new Error('Orden no encontrada');
+}
+
+function modificarOrden(ordenID, cliente, bebidas, motivo) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const ordenesSheet = ss.getSheetByName('Órdenes');
+  const itemsSheet = ss.getSheetByName('Items');
+
+  const ordenes = ordenesSheet.getDataRange().getValues();
+  let ordenRow = -1;
+
+  for (let i = 1; i < ordenes.length; i++) {
+    if (ordenes[i][0] === ordenID) {
+      if (ordenes[i][4] !== 'Pendiente') {
+        throw new Error('Solo se pueden modificar órdenes pendientes');
+      }
+      ordenRow = i + 1;
+
+      // Actualizar cliente si se proporcionó
+      if (cliente && cliente !== ordenes[i][3]) {
+        ordenesSheet.getRange(ordenRow, 4).setValue(cliente);
+      }
+
+      // Escribir log de modificación
+      const now = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm');
+      const logEntry = now + ' | ' + (motivo || 'Modificación');
+      const prevLog = ordenes[i][7] || '';
+      ordenesSheet.getRange(ordenRow, 8).setValue(prevLog ? prevLog + '\n' + logEntry : logEntry);
+      break;
+    }
+  }
+
+  if (ordenRow === -1) throw new Error('Orden no encontrada');
+
+  // Eliminar items existentes (de abajo hacia arriba)
+  const items = itemsSheet.getDataRange().getValues();
+  for (let j = items.length - 1; j >= 1; j--) {
+    if (items[j][1] === ordenID) {
+      itemsSheet.deleteRow(j + 1);
+    }
+  }
+
+  // Insertar nuevos items
+  bebidas.forEach((bebida, i) => {
+    itemsSheet.appendRow([
+      ordenID + '-' + (i + 1),
+      ordenID,
+      bebida.nombre,
+      bebida.cantidad,
+      bebida.detalles || ''
+    ]);
+  });
+
+  return { mensaje: 'Orden ' + ordenID + ' modificada con ' + bebidas.length + ' bebidas' };
+}
+
+function eliminarOrden(ordenID) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const ordenesSheet = ss.getSheetByName('Órdenes');
+  const itemsSheet = ss.getSheetByName('Items');
+
+  // Verificar que la orden existe y no está pendiente
+  const ordenes = ordenesSheet.getDataRange().getValues();
+  let ordenRow = -1;
+
+  for (let i = 1; i < ordenes.length; i++) {
+    if (ordenes[i][0] === ordenID) {
+      if (ordenes[i][4] === 'Pendiente') {
+        throw new Error('No se pueden eliminar órdenes pendientes. Cancélela primero.');
+      }
+      ordenRow = i + 1;
+      break;
+    }
+  }
+
+  if (ordenRow === -1) throw new Error('Orden no encontrada');
+
+  // Eliminar items (de abajo hacia arriba)
+  const items = itemsSheet.getDataRange().getValues();
+  for (let j = items.length - 1; j >= 1; j--) {
+    if (items[j][1] === ordenID) {
+      itemsSheet.deleteRow(j + 1);
+    }
+  }
+
+  // Eliminar la orden
+  ordenesSheet.deleteRow(ordenRow);
+
+  return { mensaje: 'Orden ' + ordenID + ' eliminada permanentemente' };
 }
 
 function crearOrden(ticket, nombreCliente, bebidas) {
@@ -206,8 +346,8 @@ function obtenerHistorial(limite) {
     for (let i = ordenes.length - 1; i >= 1; i--) {
       const estado = ordenes[i][4];
       
-      // Solo órdenes completadas
-      if (estado !== 'Completada') continue;
+      // Solo órdenes completadas o canceladas
+      if (estado !== 'Completada' && estado !== 'Cancelada') continue;
       
       const ordenID = ordenes[i][0];
       const itemsOrden = [];
@@ -222,16 +362,17 @@ function obtenerHistorial(limite) {
         }
       }
       
-      if (itemsOrden.length > 0) {
-        resultado.push({
-          id: ordenID,
-          ticket: ordenes[i][2],
-          cliente: ordenes[i][3],
-          timestamp: ordenes[i][1],
-          timestampCompletada: ordenes[i][5] || null,
-          items: itemsOrden
-        });
-      }
+      resultado.push({
+        id: ordenID,
+        ticket: ordenes[i][2],
+        cliente: ordenes[i][3],
+        estado: estado,
+        timestamp: ordenes[i][1],
+        timestampCompletada: ordenes[i][5] || null,
+        cancelReason: ordenes[i][6] || null,
+        modLog: ordenes[i][7] || null,
+        items: itemsOrden
+      });
       
       // Si hay límite y ya llegamos, parar
       if (limite && resultado.length >= limite) {
