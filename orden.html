@@ -152,7 +152,7 @@
     }
 
     .container {
-      max-width: 800px;
+      max-width: min(95vw, 800px);
       margin: 0 auto;
       padding: 20px;
       position: relative;
@@ -706,10 +706,65 @@
     .connection-status.offline .status-dot { background: var(--chile); }
     .connection-status.offline .status-text { color: rgba(255,255,255,0.9); }
 
-    @media (max-width: 480px) {
-      .container { padding: 14px; }
+    /* ===== RESPONSIVE: Desktop-first ===== */
+
+    /* Desktop wide (>=1200px) — use space for two-column layout */
+    @media (min-width: 1200px) {
+      .container {
+        max-width: min(95vw, 1100px);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 24px;
+        align-items: start;
+      }
+      .header {
+        grid-column: 1 / -1;
+      }
+      .contador {
+        grid-column: 1 / -1;
+      }
+      .container > .btn-submit {
+        grid-column: 1 / -1;
+      }
+    }
+
+    /* Tablet (768px - 1024px) */
+    @media (max-width: 1024px) and (min-width: 769px) {
+      .container {
+        max-width: min(95vw, 700px);
+        padding: 18px;
+      }
+    }
+
+    /* Mobile (<=768px) */
+    @media (max-width: 768px) {
+      .container {
+        max-width: 100%;
+        padding: 14px;
+      }
+      .header { padding: 22px 20px 18px; }
       .header h1 { font-size: 28px; }
       .contador-numero { font-size: 44px; }
+      .panel { padding: 18px; }
+      .btn-submit { font-size: 17px; padding: 16px; }
+    }
+
+    /* Small mobile (<=480px) */
+    @media (max-width: 480px) {
+      .container { padding: 10px; }
+      .header { padding: 18px 14px 14px; margin-bottom: 16px; }
+      .header h1 { font-size: 24px; }
+      .header .subtitle { font-size: 11px; letter-spacing: 1px; }
+      .contador { padding: 16px; margin-bottom: 14px; }
+      .contador-numero { font-size: 38px; }
+      .contador-label { font-size: 11px; }
+      .panel { padding: 14px; margin-bottom: 14px; border-radius: 10px; }
+      .btn { padding: 13px; font-size: 15px; }
+      .btn-submit { font-size: 16px; padding: 15px; }
+      .bebida-item { padding: 10px 12px; }
+      .bebida-nombre { font-size: 15px; }
+      .bebidas-list { max-height: 250px; padding: 10px; }
+      .section-title { font-size: 17px; }
     }
   </style>
 </head>
