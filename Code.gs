@@ -2,13 +2,15 @@
  * API KDS
  */
 
-// PASO IMPORTANTE: Reemplazar con tu ID de spreadsheet
-const SPREADSHEET_ID = '1iHJ0RQTH3LRFzkdZXRDz_3W2R4GQyTNdt2NbgRVd8Tk';
-const API_TOKEN = 'qchulada-kds-jacaranda';
+// PASO IMPORTANTE: Definir SPREADSHEET_ID y API_TOKEN en
+// Configuración del proyecto > Propiedades del script
+const SCRIPT_PROPS = PropertiesService.getScriptProperties();
+const SPREADSHEET_ID = SCRIPT_PROPS.getProperty('SPREADSHEET_ID');
+const API_TOKEN = SCRIPT_PROPS.getProperty('API_TOKEN');
 
 function doGet(e) {
   try {
-    if (e.parameter.token !== API_TOKEN) {
+    if (!API_TOKEN || e.parameter.token !== API_TOKEN) {
       return jsonResponse({ success: false, error: 'Token inválido' });
     }
 
@@ -56,7 +58,7 @@ function doPost(e) {
   try {
     const payload = JSON.parse(e.postData.contents);
 
-    if (payload.token !== API_TOKEN) {
+    if (!API_TOKEN || payload.token !== API_TOKEN) {
       return jsonResponse({ success: false, error: 'Token inválido' });
     }
 
